@@ -1,0 +1,98 @@
+\section{Motivation}
+
+Most optimization schemes can be explained by defining an approximation 
+\(\hat{\Loss}\) for the \(\Loss\) function we wish to minimize, minimize that
+approximation \(\hat{\Loss}\) instead and uses the minimum as our next guess.
+This approximation is typically a simple function which is easy to minimize.
+
+\begin{itemize}
+	\item 
+	The Newton-Raphson method directly uses the second taylor approximation
+	\begin{align*}
+		\hat{\Loss}_{N}(\theta + \step)
+		:= T^2_\theta \Loss(\theta + \step)
+		= \Loss(\theta)
+		+ \langle \nabla\Loss(\theta), \step\rangle
+		+ \tfrac12 \langle \nabla^2\Loss(\theta) \step, \step\rangle.
+	\end{align*}
+	Optimizing \(\hat{\Loss}_{N}\) for our next guess of the optimum of \(\Loss\)
+	yields
+	\begin{align*}
+		\step^*_{N} := -[\nabla^2\Loss(\theta)]^{-1}\nabla\Loss(\theta)
+		= \argmin_\step \hat{\Loss}_{N}(\theta + \step),
+	\end{align*}
+	assuming the hessian \(\nabla^2\Loss(\theta)\) is strictly positive definite.
+
+	\item
+	Gradient Descent on the other hand is more conservative when it comes to its
+	approximation. Using the fundamental theorem of calculus twice, we can bound
+	the approximation error of the first Taylor approximation
+	\begin{align*}
+		|\Loss(\theta+\step) - T^1_\theta \Loss(\theta+\step)|
+		&= \left| \frac 12 \int_0^1 \step^T \nabla^2\Loss(\theta + \lambda \step)\step d\lambda\right|
+		% \\
+		% &\le \frac 12 \int_0^1 \underbrace{
+		% 	\left|\step^T \nabla^2\Loss(\theta + \lambda \step)\step\right|
+		% }_{\le \ubound \step^T \step} d\lambda\\
+		\le \tfrac{\ubound}2 \|\step\|^2,
+	\end{align*}
+	assuming \(\nabla^2\Loss \preceq \ubound\identity\) in the sense that \(\ubound\identity
+	- \nabla^2\Loss(\theta)\) is weakly positive definite for all \(\theta\). Or
+	equivalently: all eigenvalues of \(\nabla^2\Loss\) are smaller than
+	\(\ubound\). From this we obtain
+	\begin{align*}
+		\Loss(\theta + \step) \le \hat{\Loss}_G(\theta+\step)
+		:= T^1_\theta \Loss(\theta+\step) + \tfrac{\ubound}2\|\step\|^2
+	\end{align*}
+	with the approximation \(\hat{\Loss}_{G}\), we again find an analytical
+	solution
+	\begin{align*}
+		\step^*_{G} := - \frac1\ubound \nabla\Loss(\theta)
+		= \argmin_\step \hat{\Loss}_{G}(\theta + \step).
+	\end{align*}
+\end{itemize}
+
+While the Newton-Raphson Method uses the ex-ante better approximation, it
+ignores the question of the quality of the approximation entirely. Gradient
+Descent tries to answer that question, but only really kicks the can further
+down the line: For how long can we trust the first taylor approximation? Well,
+that depends how fast the first derivative can change (i.e. how large can the
+second derivative get?). We could then of course just hope a certain learning
+rate will work and try. If we do have an acceptable improvement, we take it,
+otherwise we try again (this is essentially Armijo's rule and we can optimize
+arbitrary \(C^1\) functions with it!). But if we are in a stochastic setting, we
+don't actually know how well we are performing from step to step.
+
+\fxnote{Example: Sum of two different parabolas? Can't use Armijo's rule sequentially}
+
+Maybe we can estimate the rate the approximation deteriorates by
+approximating the second derivative? Well, then you need to bound the third
+derivative\footnote{Nesterov's Newton Scheme}\fxwarning*{insert citation}. Want
+to approximate the third derivative? Better bound the fourth!  Okay, this is
+leading nowhere. We need something else.
+
+\subsection{Statistical Estimators}
+
+What if we assume that our loss function \(\Loss\) is the
+realization of a random field? That seems strange. We want to optimize a real
+determined problem. Classify whether it is a cat or not. That has nothing to do
+with randomness! Well, that is only strange in the same way it is strange to
+assume that the occurrence of some mineral in earths crust is randomly
+distributed.  That it is clearly not random. Either the mineral is there, or it
+is not. But assuming that how the mineral got there was random, justifies why
+geostatistics might make sense after all. In a similar vein it is quite
+reasonable to assume that the evolution of language and animals has a lot of
+randomness attached to it. So why not assume, that the real loss function from
+learning this problem is stochastic? To avoid confusion let us be clear, we do
+not mean the empirical loss function using only part of the data. We mean the
+``real loss'' function which is usually defined as the expected loss over the
+data. What if the real loss is itself the realization of a random field?
+
+Okay what do we gain? Well, we can use a statistical estimate for
+\(\hat{\Loss}(\theta)\), if we know the loss at
+\(\Loss(\theta_1),\dots,\Loss(\theta_n)\). The nice thing about statistical
+estimators is, that they do not have the same Matryoshka doll properties, that
+the Taylor estimators have. So we can get rid of hyperparameters like the
+learning rate.
+
+
