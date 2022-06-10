@@ -1,1 +1,43 @@
 \section{Best Linear Unbiased Estimator}
+
+Now that we hopefully justified, why we want to view \(\Loss\) as a random field,
+let us see what we gain from that. Bayesian optimization provides us with
+an excellent but also very expensive answer to that question. We now want to
+find a cheap approximation of \(\Loss\) again and optimize that instead.
+
+Let us first recapitulate what a BLUE is. A linear estimator \(\hat{Y}\) of
+\(Y\) using \(X_1,\dots,X_n\) is an element of the linear hull shifted by a
+constant 
+\begin{align*}
+	\hat{Y}\in \linHull\{X_1,\dots,X_n\} + \real.
+\end{align*}
+An unbiased linear estimator is from the set
+\begin{align*}
+	\LUE = \{ \hat{Y} \in \linHull\{X_1,\dots,X_n\} + \real : \E[\hat{Y}] = \E[Y]\}.
+\end{align*}
+And the BLUE is the best linear unbiased estimator from that set
+\begin{align*}
+	\BLUE[Y\mid X_1,\dots, X_n] := \argmin_{\hat{Y}\in\LUE} \E[\|\hat{Y} - Y\|^2].
+\end{align*}
+Other risk functions to minimize are thinkable, but this is the usual one. If
+\(X,Y_1,\dots, Y_n\) are multivariate normal distributed, then we have\fxwarning{double-check this statement, source?, appendix?}
+\begin{align*}
+	\BLUE[Y\mid X_1,\dots,X_n]
+	&= \E[Y\mid X_1,\dots, X_n]\\
+	\bigg(&=
+	\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n):f\ \text{measurable}\}} \E[\|Y-\hat{Y}\|^2]
+	\bigg).
+\end{align*}
+As Bayesian Optimization usually assumes Gaussian Random Fields, working with
+the BLUE is really equivalent to working with the conditional expectation in
+that setting.
+
+Okay, the most simple BLUE one can think of is
+\begin{align*}
+	&\BLUE[\Loss(\param + \step) \mid \Loss(\param)]\\
+	&= \E[\Loss(\param + \step)]
+	+ \frac{\Cov(\Loss(\param+\step),\Loss(\param))}{\Cov(\Loss(\param), \Loss(\param))}
+	\left[\Loss(\param) - \E[\Loss(\param)]\right]
+\end{align*}
+
+
