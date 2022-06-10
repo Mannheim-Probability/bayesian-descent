@@ -1,2 +1,19 @@
-\section{Related Literature}
+\section{Related Work}
+
+In Bayesian Optimization \parencite[e.g.][]{frazierBayesianOptimization2018}
+\fxwarning{Todo}
+
+In their seminal work \citetitle{dauphinIdentifyingAttackingSaddle2014}
+\textcite{dauphinIdentifyingAttackingSaddle2014} suggest that we
+should view the loss function \(\Loss\) as the realization of an isotropic,
+centered Gaussian fandom field. Using this assumption they were able to use an
+analysis of the distribution of critical points of such a random field
+\parencite{brayStatisticsCriticalPoints2007}, to argue, that saddle points are
+much more common in high dimension than local minima, and that the local minima
+that do exist are overwhelmingly likely close to the global minimum. They
+then confirmed their predictions about critical points on the MNIST dataset.
+
+To my knowledge this is the only real theoretical explanation so far, why
+optimization using gradient descent of high dimensional non-convex functions
+might be so unreasonably effective.
 

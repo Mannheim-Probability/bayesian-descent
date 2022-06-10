@@ -9,46 +9,46 @@ This approximation is typically a simple function which is easy to minimize.
 	\item 
 	The Newton-Raphson method directly uses the second taylor approximation
 	\begin{align*}
-		\hat{\Loss}_{N}(\theta + \step)
-		:= T^2_\theta \Loss(\theta + \step)
-		= \Loss(\theta)
-		+ \langle \nabla\Loss(\theta), \step\rangle
-		+ \tfrac12 \langle \nabla^2\Loss(\theta) \step, \step\rangle.
+		\hat{\Loss}_{N}(\param + \step)
+		:= T^2_\param \Loss(\param + \step)
+		= \Loss(\param)
+		+ \langle \nabla\Loss(\param), \step\rangle
+		+ \tfrac12 \langle \nabla^2\Loss(\param) \step, \step\rangle.
 	\end{align*}
 	Optimizing \(\hat{\Loss}_{N}\) for our next guess of the optimum of \(\Loss\)
 	yields
 	\begin{align*}
-		\step^*_{N} := -[\nabla^2\Loss(\theta)]^{-1}\nabla\Loss(\theta)
-		= \argmin_\step \hat{\Loss}_{N}(\theta + \step),
+		\step^*_{N} := -[\nabla^2\Loss(\param)]^{-1}\nabla\Loss(\param)
+		= \argmin_\step \hat{\Loss}_{N}(\param + \step),
 	\end{align*}
-	assuming the hessian \(\nabla^2\Loss(\theta)\) is strictly positive definite.
+	assuming the hessian \(\nabla^2\Loss(\param)\) is strictly positive definite.
 
 	\item
 	Gradient Descent on the other hand is more conservative when it comes to its
 	approximation. Using the fundamental theorem of calculus twice, we can bound
 	the approximation error of the first Taylor approximation
 	\begin{align*}
-		|\Loss(\theta+\step) - T^1_\theta \Loss(\theta+\step)|
-		&= \left| \frac 12 \int_0^1 \step^T \nabla^2\Loss(\theta + \lambda \step)\step d\lambda\right|
+		|\Loss(\param+\step) - T^1_\param \Loss(\param+\step)|
+		&= \left| \frac 12 \int_0^1 \step^T \nabla^2\Loss(\param + \lambda \step)\step d\lambda\right|
 		% \\
 		% &\le \frac 12 \int_0^1 \underbrace{
-		% 	\left|\step^T \nabla^2\Loss(\theta + \lambda \step)\step\right|
+		% 	\left|\step^T \nabla^2\Loss(\param + \lambda \step)\step\right|
 		% }_{\le \ubound \step^T \step} d\lambda\\
 		\le \tfrac{\ubound}2 \|\step\|^2,
 	\end{align*}
 	assuming \(\nabla^2\Loss \preceq \ubound\identity\) in the sense that \(\ubound\identity
-	- \nabla^2\Loss(\theta)\) is weakly positive definite for all \(\theta\). Or
+	- \nabla^2\Loss(\param)\) is weakly positive definite for all \(\param\). Or
 	equivalently: all eigenvalues of \(\nabla^2\Loss\) are smaller than
 	\(\ubound\). From this we obtain
 	\begin{align*}
-		\Loss(\theta + \step) \le \hat{\Loss}_G(\theta+\step)
-		:= T^1_\theta \Loss(\theta+\step) + \tfrac{\ubound}2\|\step\|^2
+		\Loss(\param + \step) \le \hat{\Loss}_G(\param+\step)
+		:= T^1_\param \Loss(\param+\step) + \tfrac{\ubound}2\|\step\|^2
 	\end{align*}
 	with the approximation \(\hat{\Loss}_{G}\), we again find an analytical
 	solution
 	\begin{align*}
-		\step^*_{G} := - \frac1\ubound \nabla\Loss(\theta)
-		= \argmin_\step \hat{\Loss}_{G}(\theta + \step).
+		\step^*_{G} := - \frac1\ubound \nabla\Loss(\param)
+		= \argmin_\step \hat{\Loss}_{G}(\param + \step).
 	\end{align*}
 \end{itemize}
 
@@ -59,17 +59,26 @@ down the line: For how long can we trust the first taylor approximation? Well,
 that depends how fast the first derivative can change (i.e. how large can the
 second derivative get?). We could then of course just hope a certain learning
 rate will work and try. If we do have an acceptable improvement, we take it,
-otherwise we try again (this is essentially Armijo's rule and we can optimize
-arbitrary \(C^1\) functions with it!). But if we are in a stochastic setting, we
-don't actually know how well we are performing from step to step.
+otherwise we try again with a smaller step. This is essentially backtracking with 
+something like Armijo's rule and we can optimize arbitrary \(C^1\) functions with it
+\parencite{truongBacktrackingGradientDescent2019}!
+But if we are in a stochastic setting, we don't actually know how well we are
+performing from step to step.
 
 \fxnote{Example: Sum of two different parabolas? Can't use Armijo's rule sequentially}
 
 Maybe we can estimate the rate the approximation deteriorates by
 approximating the second derivative? Well, then you need to bound the third
-derivative\footnote{Nesterov's Newton Scheme}\fxwarning*{insert citation}. Want
-to approximate the third derivative? Better bound the fourth!  Okay, this is
-leading nowhere. We need something else.
+derivative\footnote{
+	Which is how \textcite[Section 4.1]{nesterovLecturesConvexOptimization2018}
+	constructs the only second-order scheme for which convergence results exist.
+	But that ``cubic regularization'' is not well known even though ``none of
+	these [other] approaches seems to be useful in addressing the global behavior
+	of second-order schemes'' \parencite[p.
+	242]{nesterovLecturesConvexOptimization2018}. This is likely because cubic
+	regularization is not analytically solvable. So it has very expensive steps.
+}. Want to approximate the third derivative? Better bound the fourth!  Okay,
+this is leading nowhere. We need something else.
 
 \subsection{Statistical Estimators}
 
@@ -82,17 +91,45 @@ distributed.  That it is clearly not random. Either the mineral is there, or it
 is not. But assuming that how the mineral got there was random, justifies why
 geostatistics might make sense after all. In a similar vein it is quite
 reasonable to assume that the evolution of language and animals has a lot of
-randomness attached to it. So why not assume, that the real loss function from
-learning this problem is stochastic? To avoid confusion let us be clear, we do
-not mean the empirical loss function using only part of the data. We mean the
-``real loss'' function which is usually defined as the expected loss over the
-data. What if the real loss is itself the realization of a random field?
+randomness attached to it. So let us assume that we have some random field
+\(Z\), and randomly pick data \((X,Y) := (X,Z(X))\) from it. Then the real loss
+is the conditional expectation on \(Z\)
+\begin{align*}
+	\Loss(\param) = \E[\loss(\param, X,Y)\mid Z].
+\end{align*}
+Since \(\Loss\) is a random variable for every \(\param\), it is a random field.
+As an example, for the mean squared loss using some parametrized model
+\(\model{X}\), we get
+\begin{align*}
+	\Loss(\param)
+	= \E[(\model{X} - Y)^2 \mid Z]
+	= \E[(\model{X} - Z(X))^2 \mid Z].
+\end{align*}
+To actually work with this model, we need to make some assumptions.
 
-Okay what do we gain? Well, we can use a statistical estimate for
-\(\hat{\Loss}(\theta)\), if we know the loss at
-\(\Loss(\theta_1),\dots,\Loss(\theta_n)\). The nice thing about statistical
-estimators is, that they do not have the same Matryoshka doll properties, that
-the Taylor estimators have. So we can get rid of hyperparameters like the
-learning rate.
+\begin{axiom}
+	\(Z\) is a centred stationary random field, \(X\) and \(Z\) are independent.
+\end{axiom}
+
+If we define
+\begin{align*}
+	\mu(\theta, X):= \E[\loss(\param, X,Y)\mid X],
+\end{align*}
+e.g. for the mean squared case
+\begin{align*}
+	\mu(\theta, X)&= \E[(\model{X}-Z(X))^2 \mid X]\\
+	&= \model{X}^2 - 2\model{X}\underbrace{\E[Z(X)\mid X]}_{=0}
+	+ \underbrace{\E[Z(X)^2\mid X]}_{=\sigma^2}\\
+	&= \model{X}^2 + \sigma^2,
+\end{align*}
+then we have by the tower property of conditional expectation
+\begin{align*}
+	\E[\Loss(\theta)]
+	= \E[\loss(\theta, X,Y)]
+	= \E[\mu(\theta, X)].
+\end{align*}
+This allows us to center the loss. Or in the mean squared case: if we use no
+information about \(Z\), we can still make sure that \(\Loss\) has constant
+expectation \(\sigma^2\), by subtracting \(\model{X}^2\).
 
 
