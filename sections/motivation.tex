@@ -71,10 +71,10 @@ Maybe we can estimate the rate the approximation deteriorates by
 approximating the second derivative? Well, then you need to bound the third
 derivative\footnote{
 	Which is how \textcite[Section 4.1]{nesterovLecturesConvexOptimization2018}
-	constructs the only second-order scheme for which convergence results exist.
-	But that ``cubic regularization'' is not well known even though ``none of
-	these [other] approaches seems to be useful in addressing the global behavior
-	of second-order schemes'' \parencite[p.
+	constructs the only second-order scheme for which global convergence results
+	exist.  But that ``cubic regularization'' is not well known even though
+	``none of these [other] approaches seems to be useful in addressing the
+	global behavior of second-order schemes'' \parencite[p.
 	242]{nesterovLecturesConvexOptimization2018}. This is likely because cubic
 	regularization is not analytically solvable. So it has very expensive steps.
 }. Want to approximate the third derivative? Better bound the fourth!  Okay,
@@ -113,20 +113,20 @@ To actually work with this model, we need to make some assumptions.
 
 If we define
 \begin{align*}
-	\mu(\theta, X):= \E[\loss(\param, X,Y)\mid X],
+	\mu(\param, X):= \E[\loss(\param, X,Y)\mid X],
 \end{align*}
 e.g. for the mean squared case
 \begin{align*}
-	\mu(\theta, X)&= \E[(\model{X}-Z(X))^2 \mid X]\\
+	\mu(\param, X)&= \E[(\model{X}-Z(X))^2 \mid X]\\
 	&= \model{X}^2 - 2\model{X}\underbrace{\E[Z(X)\mid X]}_{=0}
 	+ \underbrace{\E[Z(X)^2\mid X]}_{=\sigma^2}\\
 	&= \model{X}^2 + \sigma^2,
 \end{align*}
 then we have by the tower property of conditional expectation
 \begin{align*}
-	\E[\Loss(\theta)]
-	= \E[\loss(\theta, X,Y)]
-	= \E[\mu(\theta, X)].
+	\E[\Loss(\param)]
+	= \E[\loss(\param, X,Y)]
+	= \E[\mu(\param, X)].
 \end{align*}
 This allows us to center the loss. Or in the mean squared case: if we use no
 information about \(Z\), we can still make sure that \(\Loss\) has constant

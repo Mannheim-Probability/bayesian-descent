@@ -1,7 +1,68 @@
 \section{Related Work}
 
+\subsection{Bayesian Optimization}
+
 In Bayesian Optimization \parencite[e.g.][]{frazierBayesianOptimization2018}
-\fxwarning{Todo}
+we assume that \(\Loss\) is a random field and search for its minimum by
+optimizing one of the following measures in every step:
+
+\begin{enumerate}
+	\item We maximize the \emph{expected improvement} 
+	\begin{align}\label{eq: expected improvement}
+		\EI(\param) := \E\big[
+			[\hat{\Loss}_n^*- \Loss(\param)]^+
+			\bigm|
+			\Loss(\param_1),\dots, \Loss(\param_n)\
+		\big]
+	\end{align}
+	over \(\param\), with
+	\begin{align*}
+		\hat{\Loss}_n^* := \inf\{\Loss(\param_1),\dots, \Loss(\param_n)\}
+		\quad \text{and} \quad
+		(x)^+ := \max\{x, 0\}.
+	\end{align*}
+
+	\item If we have to guess the minimum after \(n\) guesses, then we might
+	choose
+	\begin{align*}
+		\hat{\param}^*_n
+		:= \argmin_{\param} \E[\Loss(\param)\mid \Loss(\param_1), \dots, \Loss(\param_n)].
+	\end{align*}
+	in that case our expected improvement is what is called the \emph{knowledge gradient}
+	\begin{align*}
+		\KG(\param_{n+1}) := \E[
+			\Loss(\hat{\param}^*_n) - \Loss(\hat{\param}^*_{n+1})
+			\mid \Loss(\param_1), \dots, \Loss(\param_n), \param_{n+1}
+		],
+	\end{align*}
+	and we pick our next evaluation by maximizing it.	
+\end{enumerate}
+A much more detailed comparison can be found in \cite{frazierBayesianOptimization2018},
+but here is a rough explanation why the knowledge gradient might be better
+(albeit even more difficult/expensive to compute than the expected improvement):
+To maximize the expected improvement, the decision maker is forced to pick the
+place they think will result in the smallest loss. In case of the knowledge
+gradient on the other hand, the decision maker can pick a \(\param_{n+1}\) which
+maximizes their \emph{information} about the loss \(\Loss\) instead, since they
+are still allowed to pick a more conservative \(\hat{\param}^*_{n+1}\)
+afterwards to measure the impact that evaluation had. The \emph{expected improvement}
+optimizer is essentially too conservative in the exploration-exploitation trade-off. 
+
+Bayesian Optimization requires distributional knowledge
+about the loss \(\Loss\) which so far manifested in the assumption, that
+\(\Loss\) is a Gaussian random field. And while the steps of Bayesian
+Optimization are quite good, they are also quite expensive to choose. And this
+expense scales poorly with the dimension. So
+it only used, when the input dimension of \(\Loss\) is small and the cost of
+evaluating \(\Loss\) is extremely expensive, and therefore justifies
+long/expensive deliberation where to evaluate next. How is it of relevance for
+machine learning then? Well, it is used for the meta-optimization problem of
+optimizing hyperparameters, where every evaluation of the loss requires a
+complete retraining of the model.
+
+We want to do something cheaper instead and use it to do optimization directly.
+
+\subsection{Loss Surface Analysis}
 
 In their seminal work \citetitle{dauphinIdentifyingAttackingSaddle2014}
 \textcite{dauphinIdentifyingAttackingSaddle2014} suggest that we
