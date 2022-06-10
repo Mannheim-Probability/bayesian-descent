@@ -106,10 +106,33 @@ information to construct our estimator...
 
 \subsection{First Order BLUE}
 
-What if we add the gradient to the BLUE and try again? 
+What if we add the gradient to the BLUE and try again? To clean up the resulting
+BLUE we are going to assume a stationary, centred loss \(\Loss\). By definition
+this implies
+\begin{align*}
+	\E[\Loss(\theta)] = 0
+\end{align*}
+and
+\begin{align*}
+	\Cov(\Loss(x), \Loss(y)) = C(x,y) = C(x-y).
+\end{align*}
+For stationary random fields, we have \fxwarning{source, wrap in lemma}
+\begin{align*}
+	C'(x-y)
+	&= \partial_x C(x,y)\\
+	&= \Cov(\nabla\Loss(x), \Loss(y))\\
+	&= \Cov(\Loss(y), \nabla\Loss(x))\\
+	&= \partial_x C(y,x)\\
+	&= - C'(y-x),
+\end{align*}
+which necessitates
+\begin{align*}
+	\Cov(\Loss(x), \nabla\Loss(x)) = C'(0) = - C'(0) = 0.
+\end{align*}
+This simplifies interaction effects inside the BLUE.
 
 \begin{lemma}[One-Step First-Order BLUE]
-	Assuming 	
+	Assuming
 \end{lemma}
 
 
