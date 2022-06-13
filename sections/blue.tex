@@ -30,12 +30,12 @@ Other risk functions to minimize are thinkable, but this is the usual one.
 		\BLUE[Y\mid X_1,\dots,X_n]
 		&= \E[Y\mid X_1,\dots, X_n]\\
 		\bigg(&=
-		\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n):f\ \text{measurable}\}} \E[\|Y-\hat{Y}\|^2]
+		\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n) : f\text{ meas.}\}} \E[\|Y-\hat{Y}\|^2]
 		\bigg).
 	\end{align*}
 \end{lemma}
 \begin{remark}
-	As Bayesian Optimization usually assumes Gaussian Random Fields, working with
+	As Bayesian Optimization typically assumes Gaussian random fields, working with
 	the BLUE is really equivalent to working with the conditional expectation in
 	that setting.
 \end{remark}
@@ -100,12 +100,21 @@ we do the following (keep Lemma~\ref{lem: blue is cond. expectation} in mind)
 \end{align*}
 So if we minimize the BLUE/conditional expectation directly, we essentially fear
 regressing back to a worse state as well, making use even more exploration
-averse. In addition the BLUE from Lemma~\ref{lem: one-step zero-order blue}
+averse. There are good reasons to be this risk averse in a machine learning
+context
+\begin{enumerate}
+	\item we want to avoid overfitting, i.e. we don't want to actually find the
+	global minimum
+	\item if we use stochastic gradients (SGD), we do not know after the step
+	whether we made an improvement or not. So we can not go back to the best
+	point so far.
+\end{enumerate}
+In addition, the BLUE from Lemma~\ref{lem: one-step zero-order blue}
 uses only the last step.
 
-So why are we doing this? We have learned that we can not really gain
-anything from optimizing the BLUE. Well, at least if we do not include more
-information to construct our estimator...
+This is all nice and well, but why are we doing this? We have learned that we
+can not really gain anything from optimizing the BLUE. Well, at least if we do
+not include more information to construct our estimator...
 
 \subsection{First Order BLUE}
 
@@ -211,5 +220,32 @@ the loss is centered in the following lemma.
 		- \frac{f'(\lr^2)}{f'(0)} \lr \|\nabla\Loss(\param)\|.
 	\end{align*}
 \end{corollary}
+\begin{proof}
+	Essentially all the occurrences of \(\step\) in our \(\BLUE\) are
+	rotation invariant, so only the step size matters. The only place where that
+	is not the case is the scalar product with the gradient. Therefore it
+	determines the direction, i.e.
+	\begin{align*}
+		&\min_{\step}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
+		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
+		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
+		\frac{f(\lr^2)}{f(0)} \Loss(\param)
+		+ \frac{f'(\lr^2)}{f'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
+		&= \min_{\lr}
+		\frac{f(\lr^2)}{f(0)} \Loss(\param)
+		+ \frac{f'(\lr^2)}{f'(0)}
+		\underbrace{\min_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
+			= -\eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(optimal by Cauchy-Schwarz)}}
+		}.\hphantom{\text{by Cauchy-Schwarz}}
+	\end{align*}
+	When moving the minimum into the equation we assumed that
+	\(\frac{f'(\lr^2)}{f'(0)}\ge 0\). But if it was smaller zero, we would get a
+	maximization instead, resulting in gradient descent with a negative learning
+	rate.
+\end{proof}
+
+
 
 

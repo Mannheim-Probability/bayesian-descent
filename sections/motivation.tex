@@ -7,7 +7,7 @@ This approximation is typically a simple function which is easy to minimize.
 
 \begin{itemize}
 	\item 
-	The Newton-Raphson method directly uses the second taylor approximation
+	The Newton-Raphson method is an immediate result of the second taylor approximation
 	\begin{align*}
 		\hat{\Loss}_{N}(\param + \step)
 		:= T^2_\param \Loss(\param + \step)
@@ -102,8 +102,8 @@ As an example, for the mean squared loss using some parametrized model
 \(\model{X}\), we get
 \begin{align*}
 	\Loss(\param)
-	= \E[(\model{X} - Y)^2 \mid Z]
-	= \E[(\model{X} - Z(X))^2 \mid Z].
+	= \E[\|\model{X} - Y\|^2 \mid Z]
+	= \E[\|\model{X} - Z(X)\|^2 \mid Z].
 \end{align*}
 To actually work with this model, we need to make some assumptions.
 
@@ -117,10 +117,10 @@ If we define
 \end{align*}
 e.g. for the mean squared case
 \begin{align*}
-	\mu(\param, X)&= \E[(\model{X}-Z(X))^2 \mid X]\\
-	&= \model{X}^2 - 2\model{X}\underbrace{\E[Z(X)\mid X]}_{=0}
-	+ \underbrace{\E[Z(X)^2\mid X]}_{=\sigma^2}\\
-	&= \model{X}^2 + \sigma^2,
+	\mu(\param, X)&= \E[\|\model{X}-Z(X)\|^2 \mid X]\\
+	&= \|\model{X}\|^2 - 2\langle \model{X}, \underbrace{\E[Z(X)\mid X]}_{=0}\rangle
+	+ \underbrace{\E[\|Z(X)\|^2\mid X]}_{=\sigma^2}\\
+	&= \|\model{X}\|^2 + \sigma^2,
 \end{align*}
 then we have by the tower property of conditional expectation
 \begin{align*}
