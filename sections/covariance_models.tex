@@ -38,7 +38,7 @@ and therefore
 	For a centred random field \(\Loss\) with squared exponential covariance function
 	\(\C(\step) = ce^{-a\|\step\|^2}\), we have
 	\begin{align*}
-		-\hat{\lr}\nabla\Loss(\param)
+		\hat{\step} := -\frac{\hat{\lr}}{\|\nabla\Loss(\param)\|}\nabla\Loss(\param)
 		= \argmin_{\step} \BLUE[\Loss(\param + \step)\mid \Loss(\param),\nabla\Loss(\param)]
 	\end{align*}	
 	with \fxnote{gradient norm factor wrong here I think}
@@ -46,7 +46,7 @@ and therefore
 		\hat{\lr}
 		= \frac{\Loss(\param)}{2\|\nabla\Loss(\param)\|}
 		+ \sqrt{
-			\frac{\Loss(\param)}{2\|\nabla\Loss(\param)\|} + \frac1{2a}
+			\left(\frac{\Loss(\param)}{2\|\nabla\Loss(\param)\|}\right)^2 + \frac1{2a}
 		}.
 	\end{align*}
 \end{theorem}
@@ -56,22 +56,85 @@ and therefore
 	\begin{align*}
 		\hat{\lr} =
 		\Big| \left\|\begin{pmatrix}
-			q \\ 1/\sqrt{2a}	
+			Q/2\\ 1/\sqrt{2a}	
 		\end{pmatrix}\right\|
 		- \left\|\begin{pmatrix}
-			q \\ 0
+			Q/2 \\ 0
 		\end{pmatrix}\right\|
 		\Big|	
 		\le \left\|\begin{pmatrix}
-			q\\ 1/\sqrt{2a}
+			Q/2\\ 1/\sqrt{2a}
 		\end{pmatrix} - \begin{pmatrix}
-			q \\ 0
+			Q/2 \\ 0
 		\end{pmatrix}
 		\right\| = \frac1{\sqrt{2a}}
 	\end{align*}
 	with
 	\begin{align*}
-		q = \frac{\Loss(\param)}{2\|\nabla\Loss(\param)\|}.
+		Q = \frac{\Loss(\param)}{\|\nabla\Loss(\param)\|}.
 	\end{align*}
-	And for \(q\to -\infty\) we have \(\hat{\lr}\to 0\).
+	And for \(Q\to -\infty\) we have \(\hat{\lr}\to 0\).
 \end{remark}
+
+\begin{theorem}[Improvement Guarantee]
+	Assuming \(\Loss(\param)< 0\), we have
+	\begin{align*}
+		\BLUE[\Loss(\param + \hat{\step})\mid \Loss(\param), \nabla\Loss(\param)]
+		\le \Loss(\param)\underbrace{\frac14\left[
+			3 + \sqrt{1+\frac{2\|\nabla\Loss(\param)\|^2}{a\Loss(\param)^2}}
+		\right]}_{> 1}
+		< \Loss(\param).
+	\end{align*}
+	Since the \(\BLUE\) is unbiased, the same can be said about the expectation
+	of \(\Loss(\param+\hat{\step})\).
+\end{theorem}
+\begin{proof}
+	We have
+	\begin{align*}
+		&\BLUE[\Loss(\param + \hat{\step})\mid \Loss(\param), \nabla\Loss(\param)]\\
+		&= e^{-a\hat{\lr}^2}[\Loss(\param) - \hat{\lr}\|\nabla\Loss(\param)\|]\\
+		&=e^{-a\hat{\lr}^2}\left[
+			\Loss(\param)
+			- \frac{\Loss(\param)}2
+			- |\Loss(\param)|\sqrt{
+				\frac{1}{2^2}
+				+ \frac{\|\nabla\Loss(\param)\|^2}{2a\Loss(\param)^2}
+			}
+		\right]\\
+		\overset{\Loss(\param)<0}&{=}
+		\underbrace{\Loss(\param)}_{<0}
+		\underbrace{e^{-a\hat{\lr}^2}}_{\ge 1- a\hat{\lr}^2}
+		\underbrace{\left[
+			\frac12 + \sqrt{\frac14
+			+ \frac{\|\nabla\Loss(\param)\|^2}{2a\Loss(\param)^2}}
+		\right]}_{>0}\\
+		&\le \Loss(\param)(1-a\hat{\lr}^2)
+		\frac12\left[1 + \sqrt{1 + \frac{2}{aQ^2}}\right],
+	\end{align*}
+	where we use \(Q:= \frac{\Loss(\param)}{\|\nabla\Loss(\param)\|}<0\) again.
+	Notice that
+	\begin{align*}
+		\hat{\lr}
+		= |Q|\left(-\frac12 + \sqrt{\frac14 + \frac{1}{2aQ^2}}\right)
+		= \frac{|Q|}2\left(-1 + \sqrt{1 + \frac{2}{aQ^2}}\right).
+	\end{align*}
+	We therefore want to use the third binomial formula by splitting \(\hat{\lr}^2\)
+	\begin{align*}
+		&\BLUE[\Loss(\param + \hat{\step})\mid \Loss(\param), \nabla\Loss(\param)]\\
+		&\le \frac{\Loss(\param)}2\left(
+			\left[1 + \sqrt{1+ \frac{2}{aq^2}}\right]
+			- \frac{aQ^2}4\left(-1 + \sqrt{1 + \frac{2}{aQ^2}}\right)^2
+			\left[1 + \sqrt{1 + \frac{2}{aQ^2}}\right]
+		\right)\\
+		&\le \frac{\Loss(\param)}2\left(
+			\left[1 + \sqrt{1 + \frac{2}{aQ^2}}\right]
+			- \frac{\bcancel{aQ^2}}4\left(-1 + \sqrt{1 + \frac{2}{aQ^2}}\right)
+			\left[\left|\cancel{1}+ \frac{2}{\bcancel{aQ^2}}\right| - \cancel{1^2}\right]
+		\right)\\
+		&\le \frac{\Loss(\param)}2\left[
+			\frac{3}2 + \frac12\sqrt{1+\frac2{aQ^2}}
+		\right].
+	\end{align*}
+	Substituting \(Q\) with its definition and moving \(\frac12\) out of the
+	bracket yields the claim.
+\end{proof}
