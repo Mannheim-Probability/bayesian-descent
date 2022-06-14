@@ -1,0 +1,44 @@
+\section{Upper Bounds}
+
+Instead of minimizing the \(\BLUE\) directly, like one might minimize the
+Taylor approximation directly, we could also add an error estimation to
+get some form of upper bound. Since we are working with Random Fields, these
+bounds will be stochastic. E.g. of the form
+\begin{align*}
+	\Pr(\Loss(\param + \step) \ge \underbrace{
+		\BLUE[\Loss(\param + \step)] + \delta_\epsilon(\step)
+		}_{=: \hat{\Loss}(\param + \step)})
+	\le \epsilon
+\end{align*}
+we could then optimize over \(\hat{\Loss}(\param + \step)\). How could one
+find such a \(\delta_\epsilon\)? One way is the application of the
+Markov inequality
+\begin{align*}
+	\Pr(\Loss(\param + \step) \ge \hat{\Loss}(\param + \step))
+	&=\Pr(\Loss(\param + \step) - \BLUE[\Loss(\param + \step)] \ge \delta_\epsilon(\step))\\
+	&\le\Pr(|\Loss(\param + \step) - \BLUE[\Loss(\param + \step)] | \ge \delta_\epsilon(\step))\\
+	&\le \frac{\E[\|\Loss(\param + \step) - \BLUE[\Loss(\param + \step)]\|^2]}{\delta_\epsilon(\step)}
+	\overset{!}&{=} \epsilon.
+\end{align*}
+A sensible selection of \(\delta_\epsilon\) is therefore
+\begin{align*}
+	\delta_\epsilon(\step)
+	= \sqrt{\frac{\E[\|\Loss(\param + \step) - \BLUE[\Loss(\param + \step)]\|^2]}{\epsilon}}.
+\end{align*}
+Since the \(\BLUE\) is a minimizer of the enumerator, we can actually state
+an explicit formula.
+\begin{lemma}
+	For a stationary, centered loss \(\Loss\) we have
+	\begin{align*}
+		&\E[\|\Loss(\param + \step) - \BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\|^2]\\
+		&= \C(0)\Big[1- \left(\frac{C(\step)}{C(0)}\right)^2\Big]
+		- \left\langle \nabla\C(\step), [-\nabla^2\C(0)]^{-1} \nabla\C(\step)\right\rangle
+	\end{align*}
+	in the isotropic case this simplifies to
+	\begin{align*}
+		f(0)\Big[1- \left(\frac{f(\|\step\|^2)}{f(0)}\right)^2\Big]
+		- 2\frac{f'(\|\step\|^2)}{f'(0)}\|\step\|^2.
+	\end{align*}
+	It is in particular independent of the direction of \(\step\), so the
+	gradient direction is still optimal.
+\end{lemma}

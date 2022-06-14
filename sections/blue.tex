@@ -12,13 +12,16 @@ constant
 	\hat{Y}\in \linHull\{X_1,\dots,X_n\} + \real.
 \end{align*}
 An unbiased linear estimator is from the set
-\begin{align*}
-	\LUE = \{ \hat{Y} \in \linHull\{X_1,\dots,X_n\} + \real : \E[\hat{Y}] = \E[Y]\}.
-\end{align*}
+\begin{align}\label{def: LUE}
+	\LUE
+	&= \{ \hat{Y} \in \linHull\{X_1,\dots,X_n\} + \real : \E[\hat{Y}] = \E[Y]\}\\
+	\nonumber
+	&= \{ \hat{Y} - \E[\hat{Y}] + \E[Y] : \hat{Y} \in \linHull\{X_1,\dots,X_n\}\}.
+\end{align}
 And the BLUE is the best linear unbiased estimator from that set
-\begin{align*}
+\begin{align}\label{def: BLUE}
 	\BLUE[Y\mid X_1,\dots, X_n] := \argmin_{\hat{Y}\in\LUE} \E[\|\hat{Y} - Y\|^2].
-\end{align*}
+\end{align}
 Other risk functions to minimize are thinkable, but this is the usual one.
 \begin{lemma}\label{lem: blue is cond. expectation}
 	If \(X,Y_1,\dots, Y_n\) are multivariate normal distributed, then we
@@ -27,12 +30,12 @@ Other risk functions to minimize are thinkable, but this is the usual one.
 		\BLUE[Y\mid X_1,\dots,X_n]
 		&= \E[Y\mid X_1,\dots, X_n]\\
 		\bigg(&=
-		\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n):f\ \text{measurable}\}} \E[\|Y-\hat{Y}\|^2]
+		\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n) : f\text{ meas.}\}} \E[\|Y-\hat{Y}\|^2]
 		\bigg).
 	\end{align*}
 \end{lemma}
 \begin{remark}
-	As Bayesian Optimization usually assumes Gaussian Random Fields, working with
+	As Bayesian Optimization typically assumes Gaussian random fields, working with
 	the BLUE is really equivalent to working with the conditional expectation in
 	that setting.
 \end{remark}
@@ -46,12 +49,12 @@ The most simple BLUE one can think of is given by
 	\begin{align*}
 		\BLUE[\Loss(\param + \step) \mid \Loss(\param)]
 		&= \E[\Loss(\param + \step)]
-		+ \frac{C(\param+\step,\param)}{C(\param, \param)}
+		+ \frac{\C(\param+\step,\param)}{\C(\param, \param)}
 		\big[\Loss(\param) - \E[\Loss(\param)]\big],
 	\end{align*}
-	where we define the covariance function \(C\) to be
+	where we define the covariance function \(\C\) to be
 	\begin{align*}
-		C(x,y):= \Cov(\Loss(x), \Loss(y)).
+		\C(x,y):= \Cov(\Loss(x), \Loss(y)).
 	\end{align*}
 \end{lemma}
 
@@ -60,12 +63,12 @@ expectation \(\E[\Loss(\param)] = \mu\), then we have
 \begin{align}\label{eq: constant expectation simple blue}
 	\BLUE[\Loss(\param + \step) \mid \Loss(\param)]
 	&=\mu 
-	+ \frac{C(\param+\step,\param)}{C(\param, \param)}
+	+ \frac{\C(\param+\step,\param)}{\C(\param, \param)}
 	\big[\Loss(\param) - \mu\big]
 \end{align}
 Now if \(\Loss(\param) < \mu\), then minimizing the BLUE in
 \eqref{eq: constant expectation simple blue} results in a maximization of
-\(C(\param+\step, \param)\). This will generally be just \(\step=0\) unless
+\(\C(\param+\step, \param)\). This will generally be just \(\step=0\) unless
 there is some higher variance region. In other words: We are satisfied and
 stop optimizing as soon as we get below the average \(\mu\).
 
@@ -95,21 +98,154 @@ we do the following (keep Lemma~\ref{lem: blue is cond. expectation} in mind)
 		\Loss(\param_1),\dots, \Loss(\param_n)\
 	\big].
 \end{align*}
-So if we optimize the BLUE/conditional expectation directly, we essentially fear
+So if we minimize the BLUE/conditional expectation directly, we essentially fear
 regressing back to a worse state as well, making use even more exploration
-averse. In addition the BLUE from Lemma~\ref{lem: one-step zero-order blue}
+averse. There are good reasons to be this risk averse in a machine learning
+context
+\begin{enumerate}
+	\item we want to avoid overfitting, i.e. we don't want to actually find the
+	global minimum
+	\item if we use stochastic gradients (SGD), we do not know after the step
+	whether we made an improvement or not. So we can not go back to the best
+	point so far.
+\end{enumerate}
+In addition, the BLUE from Lemma~\ref{lem: one-step zero-order blue}
 uses only the last step.
 
-So why are we doing this? We have learned that we can not really gain
-anything from optimizing the BLUE. Well, at least if we do not include more
-information to construct our estimator...
+This is all nice and well, but why are we doing this? We have learned that we
+can not really gain anything from optimizing the BLUE. Well, at least if we do
+not include more information to construct our estimator...
 
 \subsection{First Order BLUE}
 
-What if we add the gradient to the BLUE and try again? 
+What if we add the gradient to the BLUE and try again?
+For that the following
+statements are useful.
+\begin{lemma}[Covariance of the Derivative]
+	We have
+	\begin{align*}
+		\Cov(\partial_i\Loss(x), \Loss(y)) &= \partial_{x_i} \C(x,y)\\
+		\Cov(\partial_i\Loss(x), \partial_j \Loss(y)) &= \partial_{x_i y_j} \C(x,y)
+	\end{align*}
+	in particular for stationary random fields \(\C(x,y)=\C(x-y)\), we have 
+	\begin{align*}
+		\Cov(\partial_i\Loss(x), \Loss(y)) &= \partial_{x_i} \C(x,y) = \partial_i \C(x-y) = - \partial_i \C(y-x).
+	\end{align*}
+	So \(\nabla C\) is antisymmetric in this case, which implies 
+	\begin{align*}
+		\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
+	\end{align*}
+\end{lemma}
+
+\begin{corollary}[Gaussian Case]
+	If \(\Loss\) is a stationary gaussian random field, \(\Loss(x)\) and
+	\(\nabla\Loss(x)\) are independent multivariate gaussian for every \(x\).
+\end{corollary}
+
+Due to this fact, the first order BLUE is greatly simplified by assuming a
+stationary \(\Loss\). To simplify notation, we are also going to assume
+the loss is centered in the following lemma.
 
 \begin{lemma}[One-Step First-Order BLUE]
-	Assuming 	
+	If \(\Loss\) is a stationary, centred random field, then
+	\begin{align*}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
+		= \frac{\C(\step)}{\C(0)} \Loss(\param)
+		+ [\nabla^2\C(0)]^{-1} \langle \nabla \C(\step), \nabla\Loss(\param)\rangle.
+	\end{align*}
+	If we further assume that our random field is isotropic (not only shift
+	invariant/stationary, but also rotation invariant), then we can
+	write \(\C(\step)=f(\|\step\|^2)\), and get
+	\begin{align*}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
+		= \frac{f(\|\step\|^2)}{f(0)} \Loss(\param)
+		+ \frac{f'(\|\step\|^2)}{f'(0)} \langle \step, \nabla\Loss(\param)\rangle.
+	\end{align*}
 \end{lemma}
+\begin{proof}
+	As we are assuming a centred \(\Loss\), we know that any  element
+	\(\hat{\Loss}(\param + \step)\) from \(\LUE\) has the form
+	\begin{align*}
+		\hat{\Loss}(\param + \step)
+		= a\Loss(\param) + \langle b, \nabla\Loss(\param)\rangle
+	\end{align*}
+	for \(a\in\real\), \(b\in \real^\dimension\). So we want to minimize 
+	\begin{align*}
+		g(a,b)
+		&=\E[\|\Loss(\param +\step) - \hat{\Loss}(\param + \step)\|^2]\\
+		&= \begin{aligned}[t]
+			&\E[\Loss(\param +\step)^2]\\
+			&- 2a\E[\Loss(\param + \step)\Loss(\param)] + a^2 \E[\Loss(\param)^2]\\
+			&- 2\langle b, \E[\Loss(\param + \step)\nabla\Loss(\param)]\rangle
+			+ \langle b, \E[\nabla\Loss(\param)\nabla\Loss(\param)^T] b\rangle\\
+			&- 2a\langle b, \underbrace{\E[\Loss(\param)\nabla\Loss(\param)]}_{=0}\rangle,
+		\end{aligned}\\
+		&=\C(0) - 2a\C(\step) + a^2 \C(0)
+		- 2\langle b, \nabla\C(\step)\rangle
+		+ \langle b, \nabla^2\C(0) b\rangle
+	\end{align*}
+	with respect to \(a\) and \(b\). Fortunately there are no interactions
+	between \(a\) and \(b\) as \(\Loss(\param)\) is uncorrelated from
+	\(\nabla\Loss(\param)\). First order conditions result in
+	\begin{align*}
+		a= \frac{\C(\step)}{\C(0)}
+		\quad \text{and} \quad
+		b = [\nabla^2 \C(0)]^{-1}\nabla \C(\step).
+	\end{align*}
+	These are minima, since \(\nabla^2\C(0)\) is positive definite, because of
+	\begin{align*}
+		\langle b, \nabla^2\C(0) b\rangle = \E[\langle b, \nabla\Loss(\param)\rangle^2] \ge 0.
+	\end{align*}
+	Now we just need to address the \(\C(\step) = f(\|\step\|^2)\) case. We have
+	\begin{align*}
+		\nabla \C(\step) &= 2f'(\|\step\|^2) \step\\
+		\nabla^2 \C(\step) &= 4 f''(\|\step\|^2) \step \step^T + 2f'(\|\step\|^2)\identity
+	\end{align*}
+	and therefore \(\nabla^2\C(0) = 2f'(0)\identity\). Plugging these results
+	into the general formula yields the claim.
+\end{proof}
+
+\begin{corollary}
+	Gradient descent, i.e.
+	\begin{align*}
+		\step = - \tilde{\lr} \nabla\Loss(\param)
+		= - \frac{\lr}{\|\nabla\Loss(\param)\|} \nabla\Loss(\param)
+	\end{align*}
+	minimizes the 1-step 0-order \(\BLUE\) for an isotropic random
+	field for some learning rate \(\tilde{\lr}\), i.e.
+	\begin{align*}
+		\min_{\step}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
+		= \min_{\lr} \frac{f(\lr^2)}{f(0)} \Loss(\param)
+		- \frac{f'(\lr^2)}{f'(0)} \lr \|\nabla\Loss(\param)\|.
+	\end{align*}
+\end{corollary}
+\begin{proof}
+	Essentially all the occurrences of \(\step\) in our \(\BLUE\) are
+	rotation invariant, so only the step size matters. The only place where that
+	is not the case is the scalar product with the gradient. Therefore it
+	determines the direction, i.e.
+	\begin{align*}
+		&\min_{\step}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
+		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
+		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
+		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
+		\frac{f(\lr^2)}{f(0)} \Loss(\param)
+		+ \frac{f'(\lr^2)}{f'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
+		&= \min_{\lr}
+		\frac{f(\lr^2)}{f(0)} \Loss(\param)
+		+ \frac{f'(\lr^2)}{f'(0)}
+		\underbrace{\min_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
+			= -\eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(optimal by Cauchy-Schwarz)}}
+		}.\hphantom{\text{by Cauchy-Schwarz}}
+	\end{align*}
+	When moving the minimum into the equation we assumed that
+	\(\frac{f'(\lr^2)}{f'(0)}\ge 0\). But if it was smaller zero, we would get a
+	maximization instead, resulting in gradient descent with a negative learning
+	rate.
+\end{proof}
+
+
 
 
