@@ -33,14 +33,12 @@ jobs:
         id: meta-info
         run: |
           set -o noglob
-          NAME=`echo ${MESSAGE} | head -n 1`
-          BODY=`echo ${MESSAGE} | tail -n +2`
+          NAME=`git log -1 --pretty=%B | head -n 1`
+          BODY=`git log -1 --pretty=%B | tail -n +2`
           echo "::set-output name=NAME::$NAME"
           echo "::set-output name=BODY::$BODY"
           echo "::set-output name=DATE::$(date +"%Y-%m-%d_%H%M")"
           echo "$NAME $BODY"
-        env:
-          MESSAGE: ${{ github.event.head_commit.message }}
         
       - name: Create Release
         uses: softprops/action-gh-release@v1
