@@ -1,7 +1,7 @@
 
 # This is a basic workflow to help you get started with Actions
 
-name: Make PDF
+name: Release Compiled PDF
 
 # Controls when the workflow will run
 on:
@@ -31,6 +31,8 @@ jobs:
       
       - name: Set Release Meta Info
         id: meta-info
+        # noglob is necessary because * is often used for bullet points in git
+        # commit message
         run: |
           set -o noglob
           NAME=`git log -1 --pretty=%B | head -n 1`
@@ -38,7 +40,7 @@ jobs:
           echo "::set-output name=NAME::$NAME"
           echo "::set-output name=BODY::$BODY"
           echo "::set-output name=DATE::$(date +"%Y-%m-%d_%H%M")"
-          echo "$NAME $BODY"
+          echo "Name: $NAME  Body: $BODY"
         
       - name: Create Release
         uses: softprops/action-gh-release@v1
