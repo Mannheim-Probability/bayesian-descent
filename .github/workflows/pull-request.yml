@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v2.2.4
         with:
           # Artifact name
-          name: ms.pdf 
+          name: ${{ github.event.pull_request.title }} 
           # A file, directory or wildcard pattern that describes what to upload
           path: "ms.pdf" 
           # The desired behavior if no files are found using the provided path.
