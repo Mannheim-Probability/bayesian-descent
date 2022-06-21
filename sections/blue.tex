@@ -8,9 +8,9 @@ find a cheap approximation of \(\Loss\) again and optimize that instead.
 Let us first recapitulate what a BLUE is. A linear estimator \(\hat{Y}\) of
 \(Y\) using \(X_1,\dots,X_n\) is an element of the linear hull shifted by a
 constant 
-\begin{align*}
+\begin{equation*}
 	\hat{Y}\in \linHull\{X_1,\dots,X_n\} + \real.
-\end{align*}
+\end{equation*}
 An unbiased linear estimator is from the set
 \begin{align}\label{def: LUE}
 	\LUE
@@ -19,9 +19,9 @@ An unbiased linear estimator is from the set
 	&= \{ \hat{Y} - \E[\hat{Y}] + \E[Y] : \hat{Y} \in \linHull\{X_1,\dots,X_n\}\}.
 \end{align}
 And the BLUE is the best linear unbiased estimator from that set
-\begin{align}\label{def: BLUE}
+\begin{equation}\label{def: BLUE}
 	\BLUE[Y\mid X_1,\dots, X_n] := \argmin_{\hat{Y}\in\LUE} \E[\|\hat{Y} - Y\|^2].
-\end{align}
+\end{equation}
 Other risk functions to minimize are thinkable, but this is the usual one.
 \begin{lemma}\label{lem: blue is cond. expectation}
 	If \(X,Y_1,\dots, Y_n\) are multivariate normal distributed, then we
@@ -46,26 +46,26 @@ The most simple BLUE one can think of is given by
 
 \begin{lemma}[One-Step Zero-Order BLUE]\label{lem: one-step zero-order blue}
 	We have
-	\begin{align*}
+	\begin{equation*}
 		\BLUE[\Loss(\param + \step) \mid \Loss(\param)]
-		&= \E[\Loss(\param + \step)]
+		= \E[\Loss(\param + \step)]
 		+ \frac{\C(\param+\step,\param)}{\C(\param, \param)}
 		\big[\Loss(\param) - \E[\Loss(\param)]\big],
-	\end{align*}
+	\end{equation*}
 	where we define the covariance function \(\C\) to be
-	\begin{align*}
+	\begin{equation*}
 		\C(x,y):= \Cov(\Loss(x), \Loss(y)).
-	\end{align*}
+	\end{equation*}
 \end{lemma}
 
 This isn't a particularly useful approximation. If we were to assume constant
 expectation \(\E[\Loss(\param)] = \mu\), then we have
-\begin{align}\label{eq: constant expectation simple blue}
+\begin{equation}\label{eq: constant expectation simple blue}
 	\BLUE[\Loss(\param + \step) \mid \Loss(\param)]
-	&=\mu 
+	=\mu 
 	+ \frac{\C(\param+\step,\param)}{\C(\param, \param)}
 	\big[\Loss(\param) - \mu\big]
-\end{align}
+\end{equation}
 Now if \(\Loss(\param) < \mu\), then minimizing the BLUE in
 \eqref{eq: constant expectation simple blue} results in a maximization of
 \(\C(\param+\step, \param)\). This will generally be just \(\step=0\) unless
@@ -78,26 +78,26 @@ improvement takes into account the fact that we can just return to the previous
 minimum and therefore forces the improvement to be greater \(0\), we are
 essentially optimizing without the \((\cdot)^+\) here. I.e instead of
 maximizing
-\begin{align*}
+\begin{equation*}
 	\EI(\param) = \E\big[
 			[\hat{\Loss}_n^*- \Loss(\param)]^+
 			\bigm|
-			\Loss(\param_1),\dots, \Loss(\param_n)\
+			\Loss(\param_1),\dots, \Loss(\param_n)
 		\big]
-\end{align*}
+\end{equation*}
 we do the following (keep Lemma~\ref{lem: blue is cond. expectation} in mind)
-\begin{align*}
+\begin{equation*}
 	\max_{\param} \E\big[
 		\hat{\Loss}_n^*- \Loss(\param)
 		\bigm|
-		\Loss(\param_1),\dots, \Loss(\param_n)\
+		\Loss(\param_1),\dots, \Loss(\param_n)
 	\big]
 	= \hat{\Loss}_n^* - \min_{\param} \E\big[
 		\Loss(\param)
 		\bigm|
-		\Loss(\param_1),\dots, \Loss(\param_n)\
+		\Loss(\param_1),\dots, \Loss(\param_n)
 	\big].
-\end{align*}
+\end{equation*}
 So if we minimize the BLUE/conditional expectation directly, we essentially fear
 regressing back to a worse state as well, making use even more exploration
 averse. There are good reasons to be this risk averse in a machine learning
@@ -128,13 +128,14 @@ statements are useful.
 		\Cov(\partial_i\Loss(x), \partial_j \Loss(y)) &= \partial_{x_i y_j} \C(x,y)
 	\end{align*}
 	in particular for stationary random fields \(\C(x,y)=\C(x-y)\), we have 
-	\begin{align*}
-		\Cov(\partial_i\Loss(x), \Loss(y)) &= \partial_{x_i} \C(x,y) = \partial_i \C(x-y) = - \partial_i \C(y-x).
-	\end{align*}
+	\begin{equation*}
+		\Cov(\partial_i\Loss(x), \Loss(y))
+		= \partial_{x_i} \C(x,y) = \partial_i \C(x-y) = - \partial_i \C(y-x).
+	\end{equation*}
 	So \(\nabla C\) is antisymmetric in this case, which implies 
-	\begin{align*}
+	\begin{equation*}
 		\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
-	\end{align*}
+	\end{equation*}
 \end{lemma}
 
 \begin{corollary}[Gaussian Case]
@@ -148,27 +149,27 @@ the loss is centered in the following lemma.
 
 \begin{lemma}[One-Step First-Order BLUE]
 	If \(\Loss\) is a stationary, centred random field, then
-	\begin{align*}
+	\begin{equation*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
 		= \frac{\C(\step)}{\C(0)} \Loss(\param)
 		+ [\nabla^2\C(0)]^{-1} \langle \nabla \C(\step), \nabla\Loss(\param)\rangle.
-	\end{align*}
+	\end{equation*}
 	If we further assume that our random field is isotropic (not only shift
 	invariant/stationary, but also rotation invariant), then we can
 	write \(\C(\step)=f(\|\step\|^2)\), and get
-	\begin{align*}
+	\begin{equation*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
 		= \frac{f(\|\step\|^2)}{f(0)} \Loss(\param)
 		+ \frac{f'(\|\step\|^2)}{f'(0)} \langle \step, \nabla\Loss(\param)\rangle.
-	\end{align*}
+	\end{equation*}
 \end{lemma}
 \begin{proof}
 	As we are assuming a centred \(\Loss\), we know that any  element
 	\(\hat{\Loss}(\param + \step)\) from \(\LUE\) has the form
-	\begin{align*}
+	\begin{equation*}
 		\hat{\Loss}(\param + \step)
 		= a\Loss(\param) + \langle b, \nabla\Loss(\param)\rangle
-	\end{align*}
+	\end{equation*}
 	for \(a\in\real\), \(b\in \real^\dimension\). So we want to minimize 
 	\begin{align*}
 		g(a,b)
@@ -178,7 +179,7 @@ the loss is centered in the following lemma.
 			&- 2a\E[\Loss(\param + \step)\Loss(\param)] + a^2 \E[\Loss(\param)^2]\\
 			&- 2\langle b, \E[\Loss(\param + \step)\nabla\Loss(\param)]\rangle
 			+ \langle b, \E[\nabla\Loss(\param)\nabla\Loss(\param)^T] b\rangle\\
-			&- 2a\langle b, \underbrace{\E[\Loss(\param)\nabla\Loss(\param)]}_{=0}\rangle,
+			&- 2a\langle b, \underbrace{\E[\Loss(\param)\nabla\Loss(\param)]}_{=0}\rangle
 		\end{aligned}\\
 		&=\C(0) - 2a\C(\step) + a^2 \C(0)
 		- 2\langle b, \nabla\C(\step)\rangle
@@ -187,11 +188,11 @@ the loss is centered in the following lemma.
 	with respect to \(a\) and \(b\). Fortunately there are no interactions
 	between \(a\) and \(b\) as \(\Loss(\param)\) is uncorrelated from
 	\(\nabla\Loss(\param)\). First order conditions result in
-	\begin{align*}
+	\begin{equation*}
 		a= \frac{\C(\step)}{\C(0)}
 		\quad \text{and} \quad
 		b = [\nabla^2 \C(0)]^{-1}\nabla \C(\step).
-	\end{align*}
+	\end{equation*}
 	These are minima, since \(\nabla^2\C(0)\) is positive definite, because of
 	\begin{align*}
 		\langle b, \nabla^2\C(0) b\rangle = \E[\langle b, \nabla\Loss(\param)\rangle^2] \ge 0.
@@ -207,18 +208,18 @@ the loss is centered in the following lemma.
 
 \begin{corollary}
 	Gradient descent, i.e.
-	\begin{align*}
+	\begin{equation*}
 		\step = - \tilde{\lr} \nabla\Loss(\param)
 		= - \frac{\lr}{\|\nabla\Loss(\param)\|} \nabla\Loss(\param)
-	\end{align*}
+	\end{equation*}
 	minimizes the 1-step 0-order \(\BLUE\) for an isotropic random
 	field for some learning rate \(\tilde{\lr}\), i.e.
-	\begin{align*}
+	\begin{equation*}
 		\min_{\step}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
 		= \min_{\lr} \frac{f(\lr^2)}{f(0)} \Loss(\param)
 		- \frac{f'(\lr^2)}{f'(0)} \lr \|\nabla\Loss(\param)\|.
-	\end{align*}
+	\end{equation*}
 \end{corollary}
 \begin{proof}
 	Essentially all the occurrences of \(\step\) in our \(\BLUE\) are

@@ -8,33 +8,33 @@ optimizing one of the following measures in every step:
 
 \begin{enumerate}
 	\item We maximize the \emph{expected improvement} 
-	\begin{align}\label{eq: expected improvement}
+	\begin{equation}\label{eq: expected improvement}
 		\EI(\param) := \E\big[
 			[\hat{\Loss}_n^*- \Loss(\param)]^+
 			\bigm|
 			\Loss(\param_1),\dots, \Loss(\param_n)\
 		\big]
-	\end{align}
+	\end{equation}
 	over \(\param\), with
-	\begin{align*}
+	\begin{equation*}
 		\hat{\Loss}_n^* := \inf\{\Loss(\param_1),\dots, \Loss(\param_n)\}
 		\quad \text{and} \quad
 		(x)^+ := \max\{x, 0\}.
-	\end{align*}
+	\end{equation*}
 
 	\item If we have to guess the minimum after \(n\) guesses, then we might
 	choose
-	\begin{align*}
+	\begin{equation*}
 		\hat{\param}^*_n
 		:= \argmin_{\param} \E[\Loss(\param)\mid \Loss(\param_1), \dots, \Loss(\param_n)].
-	\end{align*}
+	\end{equation*}
 	in that case our expected improvement is what is called the \emph{knowledge gradient}
-	\begin{align*}
+	\begin{equation*}
 		\KG(\param_{n+1}) := \E[
 			\Loss(\hat{\param}^*_n) - \Loss(\hat{\param}^*_{n+1})
 			\mid \Loss(\param_1), \dots, \Loss(\param_n), \param_{n+1}
 		],
-	\end{align*}
+	\end{equation*}
 	and we pick our next evaluation by maximizing it.	
 \end{enumerate}
 A much more detailed comparison can be found in \cite{frazierBayesianOptimization2018},

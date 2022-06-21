@@ -8,48 +8,44 @@ This approximation is typically a simple function which is easy to minimize.
 \begin{itemize}
 	\item 
 	The Newton-Raphson method is an immediate result of the second taylor approximation
-	\begin{align*}
+	\begin{equation*}
 		\hat{\Loss}_{N}(\param + \step)
 		:= T^2_\param \Loss(\param + \step)
 		= \Loss(\param)
 		+ \langle \nabla\Loss(\param), \step\rangle
 		+ \tfrac12 \langle \nabla^2\Loss(\param) \step, \step\rangle.
-	\end{align*}
+	\end{equation*}
 	Optimizing \(\hat{\Loss}_{N}\) for our next guess of the optimum of \(\Loss\)
 	yields
-	\begin{align*}
+	\begin{equation*}
 		\step^*_{N} := -[\nabla^2\Loss(\param)]^{-1}\nabla\Loss(\param)
 		= \argmin_\step \hat{\Loss}_{N}(\param + \step),
-	\end{align*}
+	\end{equation*}
 	assuming the hessian \(\nabla^2\Loss(\param)\) is strictly positive definite.
 
 	\item
 	Gradient Descent on the other hand is more conservative when it comes to its
 	approximation. Using the fundamental theorem of calculus twice, we can bound
 	the approximation error of the first Taylor approximation
-	\begin{align*}
+	\begin{equation*}
 		|\Loss(\param+\step) - T^1_\param \Loss(\param+\step)|
-		&= \left| \frac 12 \int_0^1 \step^T \nabla^2\Loss(\param + \lambda \step)\step d\lambda\right|
-		% \\
-		% &\le \frac 12 \int_0^1 \underbrace{
-		% 	\left|\step^T \nabla^2\Loss(\param + \lambda \step)\step\right|
-		% }_{\le \ubound \step^T \step} d\lambda\\
+		= \left| \frac 12 \int_0^1 \step^T \nabla^2\Loss(\param + \lambda \step)\step d\lambda\right|
 		\le \tfrac{\ubound}2 \|\step\|^2,
-	\end{align*}
+	\end{equation*}
 	assuming \(\nabla^2\Loss \preceq \ubound\identity\) in the sense that \(\ubound\identity
 	- \nabla^2\Loss(\param)\) is weakly positive definite for all \(\param\). Or
 	equivalently: all eigenvalues of \(\nabla^2\Loss\) are smaller than
 	\(\ubound\). From this we obtain
-	\begin{align*}
+	\begin{equation*}
 		\Loss(\param + \step) \le \hat{\Loss}_G(\param+\step)
 		:= T^1_\param \Loss(\param+\step) + \tfrac{\ubound}2\|\step\|^2
-	\end{align*}
+	\end{equation*}
 	with the approximation \(\hat{\Loss}_{G}\), we again find an analytical
 	solution
-	\begin{align*}
+	\begin{equation*}
 		\step^*_{G} := - \frac1\ubound \nabla\Loss(\param)
 		= \argmin_\step \hat{\Loss}_{G}(\param + \step).
-	\end{align*}
+	\end{equation*}
 \end{itemize}
 
 While the Newton-Raphson Method uses the ex-ante better approximation, it
@@ -94,17 +90,17 @@ reasonable to assume that the evolution of language and animals has a lot of
 randomness attached to it. So let us assume that we have some random field
 \(Z\), and randomly pick data \((X,Y) := (X,Z(X))\) from it. Then the real loss
 is the conditional expectation on \(Z\)
-\begin{align*}
+\begin{equation*}
 	\Loss(\param) = \E[\loss(\param, X,Y)\mid Z].
-\end{align*}
+\end{equation*}
 Since \(\Loss\) is a random variable for every \(\param\), it is a random field.
 As an example, for the mean squared loss using some parametrized model
 \(\model{X}\), we get
-\begin{align*}
+\begin{equation*}
 	\Loss(\param)
 	= \E[\|\model{X} - Y\|^2 \mid Z]
 	= \E[\|\model{X} - Z(X)\|^2 \mid Z].
-\end{align*}
+\end{equation*}
 To actually work with this model, we need to make some assumptions.
 
 \begin{axiom}
@@ -112,9 +108,9 @@ To actually work with this model, we need to make some assumptions.
 \end{axiom}
 
 If we define
-\begin{align*}
+\begin{equation*}
 	\mu(\param, X):= \E[\loss(\param, X,Y)\mid X],
-\end{align*}
+\end{equation*}
 e.g. for the mean squared case
 \begin{align*}
 	\mu(\param, X)&= \E[\|\model{X}-Z(X)\|^2 \mid X]\\
@@ -123,11 +119,11 @@ e.g. for the mean squared case
 	&= \|\model{X}\|^2 + \sigma^2,
 \end{align*}
 then we have by the tower property of conditional expectation
-\begin{align*}
+\begin{equation*}
 	\E[\Loss(\param)]
 	= \E[\loss(\param, X,Y)]
 	= \E[\mu(\param, X)].
-\end{align*}
+\end{equation*}
 This allows us to center the loss. Or in the mean squared case: if we use no
 information about \(Z\), we can still make sure that \(\Loss\) has constant
 expectation \(\sigma^2\), by subtracting \(\model{X}^2\).
