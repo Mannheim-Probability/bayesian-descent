@@ -132,7 +132,7 @@ statements are useful.
 		\Cov(\partial_i\Loss(x), \Loss(y))
 		= \partial_{x_i} \C(x,y) = \partial_i \C(x-y) = - \partial_i \C(y-x).
 	\end{equation*}
-	So \(\nabla C\) is antisymmetric in this case, which implies 
+	So \(\nabla \C\) is antisymmetric in this case, which implies 
 	\begin{equation*}
 		\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
 	\end{equation*}
@@ -156,11 +156,11 @@ the loss is centered in the following lemma.
 	\end{equation*}
 	If we further assume that our random field is isotropic (not only shift
 	invariant/stationary, but also rotation invariant), then we can
-	write \(\C(\step)=f(\|\step\|^2)\), and get
+	write \(\C(\step)=\iC(\|\step\|^2)\), and get
 	\begin{equation*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
-		= \frac{f(\|\step\|^2)}{f(0)} \Loss(\param)
-		+ \frac{f'(\|\step\|^2)}{f'(0)} \langle \step, \nabla\Loss(\param)\rangle.
+		= \frac{\iC(\|\step\|^2)}{\iC(0)} \Loss(\param)
+		+ \frac{\iC'(\|\step\|^2)}{\iC'(0)} \langle \step, \nabla\Loss(\param)\rangle.
 	\end{equation*}
 \end{lemma}
 \begin{proof}
@@ -197,14 +197,23 @@ the loss is centered in the following lemma.
 	\begin{align*}
 		\langle b, \nabla^2\C(0) b\rangle = \E[\langle b, \nabla\Loss(\param)\rangle^2] \ge 0.
 	\end{align*}
-	Now we just need to address the \(\C(\step) = f(\|\step\|^2)\) case. We have
+	Now we just need to address the \(\C(\step) = \iC(\|\step\|^2)\) case. We have
 	\begin{align*}
-		\nabla \C(\step) &= 2f'(\|\step\|^2) \step\\
-		\nabla^2 \C(\step) &= 4 f''(\|\step\|^2) \step \step^T + 2f'(\|\step\|^2)\identity
+		\nabla \C(\step) &= 2\iC'(\|\step\|^2) \step\\
+		\nabla^2 \C(\step) &= 4 \iC''(\|\step\|^2) \step \step^T + 2\iC'(\|\step\|^2)\identity
 	\end{align*}
-	and therefore \(\nabla^2\C(0) = 2f'(0)\identity\). Plugging these results
+	and therefore \(\nabla^2\C(0) = 2\iC'(0)\identity\). Plugging these results
 	into the general formula yields the claim.
 \end{proof}
+\begin{remark}
+	One could also drop the conditioning on the loss itself
+	\begin{equation*}
+		\BLUE[\Loss(\param + \step)\mid \nabla\Loss(\param)]
+		= [\nabla^2\C(0)]^{-1}\langle\nabla\C(\step), \nabla\Loss(\param)\rangle
+		= \frac{\iC'(\|\step\|^2)}{\iC'(0)}\langle \step, \nabla\Loss(\param)\rangle.
+	\end{equation*}
+	Then the estimator does not take the current height into account.
+\end{remark}
 
 \begin{corollary}
 	Gradient descent, i.e.
@@ -217,8 +226,8 @@ the loss is centered in the following lemma.
 	\begin{equation*}
 		\min_{\step}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
-		= \min_{\lr} \frac{f(\lr^2)}{f(0)} \Loss(\param)
-		- \frac{f'(\lr^2)}{f'(0)} \lr \|\nabla\Loss(\param)\|.
+		= \min_{\lr} \frac{\iC(\lr^2)}{\iC(0)} \Loss(\param)
+		- \frac{\iC'(\lr^2)}{\iC'(0)} \lr \|\nabla\Loss(\param)\|.
 	\end{equation*}
 \end{corollary}
 \begin{proof}
@@ -232,17 +241,17 @@ the loss is centered in the following lemma.
 		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
 		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
-		\frac{f(\lr^2)}{f(0)} \Loss(\param)
-		+ \frac{f'(\lr^2)}{f'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
+		\frac{\iC(\lr^2)}{\iC(0)} \Loss(\param)
+		+ \frac{\iC'(\lr^2)}{\iC'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
 		&= \min_{\lr}
-		\frac{f(\lr^2)}{f(0)} \Loss(\param)
-		+ \frac{f'(\lr^2)}{f'(0)}
+		\frac{\iC(\lr^2)}{\iC(0)} \Loss(\param)
+		+ \frac{\iC'(\lr^2)}{\iC'(0)}
 		\underbrace{\min_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
 			= -\eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(optimal by Cauchy-Schwarz)}}
 		}.\hphantom{\text{by Cauchy-Schwarz}}
 	\end{align*}
 	When moving the minimum into the equation we assumed that
-	\(\frac{f'(\lr^2)}{f'(0)}\ge 0\). But if it was smaller zero, we would get a
+	\(\frac{\iC'(\lr^2)}{\iC'(0)}\ge 0\). But if it was smaller zero, we would get a
 	maximization instead, resulting in gradient descent with a negative learning
 	rate.
 \end{proof}

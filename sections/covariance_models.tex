@@ -2,9 +2,9 @@
 
 \subsection{Squared Exponential}
 
-In this section we are going to assume \(\C(\step)=f(\|\step\|^2)\) with
+In this section we are going to assume \(\C(\step)=\iC(\|\step\|^2)\) with
 \begin{align*}
-	f(x) = c e^{-ax}.
+	\iC(x) = c e^{-ax}.
 \end{align*}
 Then the \(\BLUE\) simplifies further
 \begin{align*}
@@ -14,8 +14,8 @@ Then the \(\BLUE\) simplifies further
 \end{align*}
 Recall that the resulting optimization problem was
 \begin{align*}
-	\min_{\lr} \frac{f(\lr^2)}{f(0)}\Loss(\param)
-	- \frac{f'(\lr^2)}{f'(0)}\lr \|\nabla\Loss(\param)\|
+	\min_{\lr} \frac{\iC(\lr^2)}{\iC(0)}\Loss(\param)
+	- \frac{\iC'(\lr^2)}{\iC'(0)}\lr \|\nabla\Loss(\param)\|
 	=\min_{\lr} e^{-a\lr^2}
 	\left[\Loss(\param) - \lr \|\nabla\Loss(\param)\|\right]
 \end{align*}
@@ -37,18 +37,28 @@ and therefore
 \begin{theorem}
 	For a centred random field \(\Loss\) with squared exponential covariance function
 	\(\C(\step) = ce^{-a\|\step\|^2}\), we have
-	\begin{align*}
+	\begin{equation*}
 		\hat{\step} := -\frac{\hat{\lr}}{\|\nabla\Loss(\param)\|}\nabla\Loss(\param)
 		= \argmin_{\step} \BLUE[\Loss(\param + \step)\mid \Loss(\param),\nabla\Loss(\param)]
-	\end{align*}	
+	\end{equation*}	
 	with
-	\begin{align*}
+	\begin{equation*}
 		\hat{\lr}
 		= \frac{\Loss(\param)}{2\|\nabla\Loss(\param)\|}
 		+ \sqrt{
 			\left(\frac{\Loss(\param)}{2\|\nabla\Loss(\param)\|}\right)^2 + \frac1{2a}
 		}.
-	\end{align*}
+	\end{equation*}
+	Similarly we have
+	\begin{equation*}
+		-\frac{\hat{\lr}}{\|\nabla\Loss(\param)\|}\nabla\Loss(\param)
+		= \argmin_{\step} \BLUE[\Loss(\param + \step)\mid \nabla\Loss(\param)]
+	\end{equation*}	
+	with
+	\begin{equation*}
+		\hat{\lr} = \frac1{\sqrt{2a}}.
+	\end{equation*}
+
 \end{theorem}
 \begin{remark}
 	Since \(\Loss\) is centered, i.e. \(\E[\Loss(\param)]\), any optimization
@@ -85,8 +95,9 @@ and therefore
 		\right]}_{> 1}
 		< \Loss(\param).
 	\end{align*}
-	Since the \(\BLUE\) is unbiased, the same can be said about the expectation
-	of \(\Loss(\param+\hat{\step})\).
+	While the \(\BLUE\) is unbiased and the same can therefore be said about the
+	expectation of \(\Loss(\param+\hat{\step})\), this statement is not
+	particularly useful as both sides are zero.
 \end{theorem}
 \begin{proof}
 	We have
