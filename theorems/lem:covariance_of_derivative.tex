@@ -1,0 +1,14 @@
+We have
+\begin{align*}
+	\Cov(\partial_i\Loss(x), \Loss(y)) &= \partial_{x_i} \C(x,y)\\
+	\Cov(\partial_i\Loss(x), \partial_j \Loss(y)) &= \partial_{x_i y_j} \C(x,y)
+\end{align*}
+in particular for stationary random fields \(\C(x,y)=\C(x-y)\), we have 
+\begin{equation*}
+	\Cov(\partial_i\Loss(x), \Loss(y))
+	= \partial_{x_i} \C(x,y) = \partial_i \C(x-y) = - \partial_i \C(y-x).
+\end{equation*}
+So \(\nabla \C\) is antisymmetric in this case, which implies 
+\begin{equation*}
+	\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
+\end{equation*}

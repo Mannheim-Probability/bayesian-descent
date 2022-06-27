@@ -1,7 +1,25 @@
 %% AMS Theorem Environments
+
+%% REPEATABLE THEOREMS
+%% cf. https://tex.stackexchange.com/a/443/148164
+\makeatletter
+\newcommand{\newreptheorem}[2]{% define repeatable theorems
+	\newtheorem*{rep@#1}{\rep@title} %  -> no number, special title
+
+	\newenvironment{rep#1}[1]{% define repetition environement with required label-reference
+		\def\rep@title{#2 \ref{##1}} % use reference to define title
+		\begin{rep@#1} % begin second occasion with correct title definition
+	}{
+		\end{rep@#1}
+	}
+}
+\makeatother
+
+\newreptheorem{test}{Test}
 \theoremstyle{plain}% default
 \newtheorem{prop}{Proposition}[section]
 \newtheorem{lemma}[prop]{Lemma}
+\newreptheorem{lemma}{Lemma}
 \newtheorem{corollary}[prop]{Corollary}
 \newtheorem{theorem}[prop]{Theorem}
 
@@ -13,6 +31,8 @@
 
 \theoremstyle{remark}
 \newtheorem{remark}[prop]{Remark}
+
+
 
 %%
 \newcommand*{\real}{\mathbb{R}}
