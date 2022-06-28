@@ -1,11 +1,6 @@
 \section{Random Fields}
 
-\begin{replemma}{lem: covariance of derivative}[Covariance of the Derivative]
-	\input{theorems/lem:covariance_of_derivative.tex}
-\end{replemma}
-\begin{proof}
-	
-\end{proof}
+
 
 \begin{definition}[Variogram]
 	A random field \(Z\), for which
@@ -23,6 +18,7 @@
 \end{definition}
 
 \begin{lemma}[Covariance from Variogram]
+	\label{lem: covariance from variogram}
 	If \(Z\) is intrinsically stationary we have for \(Y_s := Z - Z(s)\)
 	and
 	\[
@@ -34,10 +30,12 @@
 		&= \variogram(x-s) + \variogram(y-s) - \variogram(x-y)\\
 		\overset{\text{symm.}}&= \variogram(x-s) + \variogram(y-s) - \variogram(y-x)
 	\end{align*}
-	We therefore have \(\variogram(x-y) = \variogram(y-x)\) or in other words
-	the variogram is symmetric. So if it exists, then \(\nabla\variogram\) is
-	antisymmetric again, with \(\nabla\variogram(0)=0\).
 \end{lemma}
+\begin{remark}[Antisymmetry]\label{rem: grad variogram antisymmetric}
+	We therefore have \(\variogram(x-y) = \variogram(y-x)\) or in other words
+	the variogram is symmetric. So if it is differentiable, then
+	\(\nabla\variogram\) is antisymmetric with \(\nabla\variogram(0)=0\).
+\end{remark}
 \begin{proof}[Proof (by Schlather?)]\fxnote{source?}
 	Assume \(Z\) is centred without loss of generality, otherwise center \(Z\)
 	resulting in \(\tilde{Z}\) and notice that \(\tilde{Y}_s\) is the centered
@@ -65,23 +63,75 @@
 	Reordering and symmetry of the covariance results in the claim.
 \end{proof}
 
-Assuming for some random field \(Z\), \(\partial_{x_i,y_i}\C(x,y)\) exists and
-therefore \(\nabla Z\), we have
-\begin{equation*}
-	\partial_i Z(x) = \lim_{h\to 0}\frac{Z(x + he_i) - Z(s) -(Z(x)-Z(s))}{h}
-	= \partial_i Y_s(x) \quad \forall x,s
-\end{equation*}
-and therefore
-\begin{equation*}
-	\Cov(\partial_i Z(x), Z(x+\step)-Z(x))
-	= \partial_{x_i}\C_x(x, x+\step)
-	= \underbrace{\partial_i\variogram(0)}_{=0} - \partial_i\variogram(-\step).
-\end{equation*}
-Since the variogram is symmetric and the derivative therefore antisymmetric.
-This leaves us with the following lemma.
+\subsection{Derivatives of Random Fields}
 
-\begin{lemma}
-	\[
-		\Cov(Z(x+\step)-Z(x), \nabla Z(x)) = \nabla\variogram(\step)
-	\]
+\begin{lemma}[Covariance and Derivative]
+	\label{lem: covariance of derivative}
+	We have
+	\begin{align*}
+		\Cov(\partial_i\Loss(x), \Loss(y)) &= \partial_{x_i} \C(x,y)\\
+		\Cov(\partial_i\Loss(x), \partial_j \Loss(y)) &= \partial_{x_i y_j} \C(x,y)
+	\end{align*}
 \end{lemma}
+\begin{remark}
+	For stationary random fields \(\C(x,y)=\C(x-y)\), the covariance
+	function \(\C\) is symmetric, i.e. \(\C(h)=\C(-h)\)
+	and therefore the derivative antisymmetric, i.e.
+	\(\partial_i\C(-h)=-\partial_i\C(h)\). In particular
+	\begin{equation*}
+		\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
+	\end{equation*}
+\end{remark}
+\begin{proof}
+	
+\end{proof}
+\begin{corollary}[Gaussian Case]
+	If \(\Loss\) is a stationary gaussian random field, \(\Loss(x)\) and
+	\(\nabla\Loss(x)\) are independent multivariate gaussian for every \(x\).
+\end{corollary}
+
+\begin{lemma}[Variogram and Derivative]
+	Assuming \(Z\) is an intrinsic, stationary, differentiable random field,
+	we have
+	\begin{enumerate}
+		\item \(
+			\Cov(Z(x+\step)-Z(x), \nabla Z(x)) = \nabla\variogram(\step)
+		\)
+		\item \(\Cov(\nabla Z(x), \nabla Z(y)) = \nabla^2\variogram(x-y)\)
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+	\begin{enumerate}[wide]
+	\item We have
+	\begin{equation*}
+		\partial_i Z(x) = \lim_{h\to 0}\frac{Z(x + he_i) - Z(s) -(Z(x)-Z(s))}{h}
+		= \partial_i Y_s(x) \quad \forall x,s
+	\end{equation*}
+	and therefore
+	\begin{equation*}
+		\Cov(\partial_i Z(x), Z(x+\step)-Z(x))
+		\overset{\text{Lem~\ref{lem: covariance of derivative}}}=
+		\partial_{x_i}\C_x(x, x+\step)
+		= \underbrace{\partial_i\variogram(0)}_{
+			=0 \mathrlap{\text{ (Remark~\ref{rem: grad variogram antisymmetric})}}
+		}
+		- \partial_i\variogram(-\step),
+	\end{equation*}
+	because the variogram is symmetric and the derivative therefore antisymmetric.
+
+	\item Here we use \(\partial_i Z(x) = \partial_i Y_s(x)\) again
+	\begin{align*}
+		\Cov(\partial_i Z(x), \partial_j Z(y))
+		&= \Cov(\partial_i Y_s(x), \partial_j Y_s(y))\\
+		\overset{\text{Lem~\ref{lem: covariance of derivative}}}&=
+		\partial_{y_j x_i} \C_s(x,y)\\
+		\overset{\text{Lem~\ref{lem: covariance from variogram}}}&=
+		\partial_{y_j x_i} [\variogram(x-s) + \variogram(y-s) - \variogram(x-y)]\\
+		&= \partial_{y_j} [\partial_i\variogram(x-s) - \partial_i\variogram(x-y)]\\
+		&= \partial_{ij}\variogram(x-y).
+		\qedhere
+	\end{align*}
+
+	\end{enumerate}
+
+\end{proof}

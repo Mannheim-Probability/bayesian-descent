@@ -119,38 +119,33 @@ not include more information to construct our estimator...
 
 \subsection{First Order BLUE}
 
-What if we add the gradient to the BLUE and try again?
-For that the following
-statements are useful.
-\begin{lemma}[Covariance of the Derivative]
-	\label{lem: covariance of derivative}
-	\input{theorems/lem:covariance_of_derivative.tex}
-\end{lemma}
+\subsubsection{Intrinsic Stationarity}
 
-\begin{corollary}[Gaussian Case]
-	If \(\Loss\) is a stationary gaussian random field, \(\Loss(x)\) and
-	\(\nabla\Loss(x)\) are independent multivariate gaussian for every \(x\).
-\end{corollary}
 
-Due to this fact, the first order BLUE is greatly simplified by assuming a
-stationary \(\Loss\). To simplify notation, we are also going to assume
-the loss is centered in the following lemma.
 
-\begin{lemma}[One-Step First-Order BLUE]
-	If \(\Loss\) is a stationary, centred random field, then
-	\begin{equation*}
+\subsubsection{Stationarity}
+
+A particularly charming thing about stationarity is, that
+\[
+	\Cov(\Loss(\param), \nabla\Loss(\param))=0,
+\]
+(cf. Lemma~\ref{lem: covariance of derivative}). So we can easily condition
+on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
+
+\begin{lemma}
+	If \(\Loss\) is a \textbf{stationary, centred} random field, then
+	\begin{align*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
-		= \frac{\C(\step)}{\C(0)} \Loss(\param)
+		&= \frac{\C(\step)}{\C(0)} \Loss(\param)
 		+ [\nabla^2\C(0)]^{-1} \langle \nabla \C(\step), \nabla\Loss(\param)\rangle.
-	\end{equation*}
-	If we further assume that our random field is isotropic (not only shift
-	invariant/stationary, but also rotation invariant), then we can
-	write \(\C(\step)=\iC(\|\step\|^2)\), and get
-	\begin{equation*}
-		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
-		= \frac{\iC(\|\step\|^2)}{\iC(0)} \Loss(\param)
+	\\
+	\intertext{
+		if additionally \(\Loss\) is \textbf{isotropic}, i.e.
+		\(\C(\step)=\iC(\|\step\|^2)\), this reduces to
+	}
+		&= \frac{\iC(\|\step\|^2)}{\iC(0)} \Loss(\param)
 		+ \frac{\iC'(\|\step\|^2)}{\iC'(0)} \langle \step, \nabla\Loss(\param)\rangle.
-	\end{equation*}
+	\end{align*}
 \end{lemma}
 \begin{proof}
 	As we are assuming a centred \(\Loss\), we know that any  element
