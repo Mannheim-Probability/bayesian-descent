@@ -6,3 +6,62 @@
 \begin{proof}
 	
 \end{proof}
+
+\begin{definition}[Variogram]
+	A random field \(Z\), for which
+	\[
+		\tilde{Z}(x) = Z(x+\step)- Z(x)
+	\]
+	is stationary for every \(\step\), is called \emph{intrinsically stationary}.
+	For any intrinsically stationary random field, the \emph{(centred) variogram} is
+	defined as
+	\[
+		\variogram(\step)	= \tfrac12\Var(Z(x+\step)-Z(x)),
+	\]
+	which is independent of \(x\) due to stationarity of \(\tilde{Z}\). For the
+	uncentered variogram use uncentered second moments instead of the variance.
+\end{definition}
+
+\begin{lemma}[Covariance from Variogram]
+	If \(Z\) is intrinsically stationary we have for \(Y_s := Z - Z(s)\)
+	and
+	\[
+		\C_s(x,y) := \Cov(Y_s(x), Y_s(y))
+	\]
+	an explicit representation using the variogram
+	\[
+		\C_s(x,y) = \variogram(x-s) + \variogram(y-s) - \variogram(x-y)
+	\]
+\end{lemma}
+\begin{proof}[Proof (by Schlather?)]\fxnote{source?}
+	Assume \(Z\) is centred without loss of generality, otherwise center \(Z\)
+	resulting in \(\tilde{Z}\) and notice that \(\tilde{Y}_s\) is the centered
+	version of \(Y_s\)
+	\begin{align*}
+		\C_s(x,y) 
+		&= \E[(Z(x) - Z(s))(Z(y)-Z(s))]\\
+		&= \E[(Z(x) - Z(y) + Z(y) - Z(s))(Z(y) - Z(x) + Z(x) - Z(s))]\\
+		&=\begin{aligned}[t]
+			-&\E[(Z(x) - Z(y))^2] &&+ \underbrace{\E[(Z(x)-Z(y))(Z(x)-Z(s))]}_{=:\Rom{1}}\\
+			+&\C_s(y,x)	&&+ \underbrace{\E[(Z(y) - Z(s))(Z(y) - Z(x))]}_{=:\Rom{2}}
+		\end{aligned}
+	\end{align*}
+	And we have
+	\begin{align*}
+		\Rom{1}
+		&=\E[(Z(x)- Z(s) + Z(s) - Z(y))(Z(x) - Z(s))]\\
+		&= 2\variogram(x-s) - \C_s(y,x)
+	\end{align*}
+	and similarly \(\Rom{2} = 2\variogram(y-s) - \C_s(y,x)\). Together this
+	results in
+	\[
+		\C_s(x,y) = -2\variogram(x-y) + 2\variogram(x-s) - \C_s(y,x) + 2\variogram(y-s) - \cancel{\C_s(y,x)} + \cancel{\C_s(y,x)}.
+	\]
+	Reordering results in the claim.
+\end{proof}
+
+\begin{lemma}
+	\[
+		\Cov(\Loss(x+\step)-\Loss(x), \nabla\Loss(x)) = \nabla\variogram(\step) - \nabla\variogram(0)
+	\]
+\end{lemma}
