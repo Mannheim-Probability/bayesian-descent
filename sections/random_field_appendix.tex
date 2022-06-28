@@ -29,9 +29,14 @@
 		\C_s(x,y) := \Cov(Y_s(x), Y_s(y))
 	\]
 	an explicit representation using the variogram
-	\[
-		\C_s(x,y) = \variogram(x-s) + \variogram(y-s) - \variogram(x-y)
-	\]
+	\begin{align*}
+		\C_s(x,y)
+		&= \variogram(x-s) + \variogram(y-s) - \variogram(x-y)\\
+		\overset{\text{symm.}}&= \variogram(x-s) + \variogram(y-s) - \variogram(y-x)
+	\end{align*}
+	We therefore have \(\variogram(x-y) = \variogram(y-x)\) or in other words
+	the variogram is symmetric. So if it exists, then \(\nabla\variogram\) is
+	antisymmetric again, with \(\nabla\variogram(0)=0\).
 \end{lemma}
 \begin{proof}[Proof (by Schlather?)]\fxnote{source?}
 	Assume \(Z\) is centred without loss of generality, otherwise center \(Z\)
@@ -57,11 +62,26 @@
 	\[
 		\C_s(x,y) = -2\variogram(x-y) + 2\variogram(x-s) - \C_s(y,x) + 2\variogram(y-s) - \cancel{\C_s(y,x)} + \cancel{\C_s(y,x)}.
 	\]
-	Reordering results in the claim.
+	Reordering and symmetry of the covariance results in the claim.
 \end{proof}
+
+Assuming for some random field \(Z\), \(\partial_{x_i,y_i}\C(x,y)\) exists and
+therefore \(\nabla Z\), we have
+\begin{equation*}
+	\partial_i Z(x) = \lim_{h\to 0}\frac{Z(x + he_i) - Z(s) -(Z(x)-Z(s))}{h}
+	= \partial_i Y_s(x) \quad \forall x,s
+\end{equation*}
+and therefore
+\begin{equation*}
+	\Cov(\partial_i Z(x), Z(x+\step)-Z(x))
+	= \partial_{x_i}\C_x(x, x+\step)
+	= \underbrace{\partial_i\variogram(0)}_{=0} - \partial_i\variogram(-\step).
+\end{equation*}
+Since the variogram is symmetric and the derivative therefore antisymmetric.
+This leaves us with the following lemma.
 
 \begin{lemma}
 	\[
-		\Cov(\Loss(x+\step)-\Loss(x), \nabla\Loss(x)) = \nabla\variogram(\step) - \nabla\variogram(0)
+		\Cov(Z(x+\step)-Z(x), \nabla Z(x)) = \nabla\variogram(\step)
 	\]
 \end{lemma}
