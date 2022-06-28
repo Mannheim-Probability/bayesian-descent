@@ -121,7 +121,55 @@ not include more information to construct our estimator...
 
 \subsubsection{Intrinsic Stationarity}
 
-
+\begin{lemma}
+	If \(\Loss\) is a \textbf{centered, intrinsically stationary} random field,
+	then
+	\begin{align*}
+		\BLUE[\underbrace{\Loss(\param+\step) - \Loss(\param)}_{=:\Loss_\param(\step)}
+		\mid \nabla\Loss(\param)]
+		&=  \nabla\variogram(\step)^T[\nabla^2\variogram(0)]^{-1}
+		\nabla\Loss(\param)\\
+		\intertext{
+			if the variogram is rotation invariant, i.e.
+			\(\variogram(\step)=\phi(\|\step^2\|)\), this simplifies to
+		}
+		&= \frac{\phi'(\|\step\|^2)}{\phi'(0)}
+		\langle \step, \nabla\Loss(\param)\rangle
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	As we know \(\Loss\) is centered, we know that any element
+	\(\hat{\Loss}(\param+\step)\) from \(\LUE\) has the form \(\langle b,
+	\nabla\Loss(\param)\rangle\) now
+	\begin{align*}
+		g(b) 
+		&:= \E[\|\Loss(\param+\step) - \langle b, \nabla\Loss(\param)\rangle\|^2]\\
+		&= \E[\Loss_\param(\step)^2]
+		- 2\langle b, \E[\Loss_\param(\step)\nabla\Loss(\param)]\rangle
+		+ b^T \E[\nabla\Loss(\param) \nabla\Loss(\param)^T] b\\
+		\overset{\text{Lem~\ref{lem: variogram and derivative}}}&=
+		2\variogram(\step) - 2\langle b, \nabla\variogram(\step)\rangle
+		+ b^T \nabla^2\variogram(0) b
+	\end{align*}
+	The first order condition \(\nabla g(b) = 0\) results in
+	\begin{equation*}
+		b = [\nabla^2\variogram(0)]^{-1}\nabla\variogram(\step).
+	\end{equation*}
+	This is a minimum since \(\nabla^2 g(b)=\nabla^2\variogram(0)\) is positive
+	definite, due to
+	\begin{equation*}
+		b^T \nabla^2\variogram(0) b = 
+		\E[\langle b, \nabla\Loss(\param)\rangle^2]\ge 0.
+	\end{equation*}
+	Now we just need to address the \(\variogram(\step) = \phi(\|\step\|^2)\) case. We have
+	\begin{align*}
+		\nabla \variogram(\step) &= 2\phi'(\|\step\|^2) \step\\
+		\nabla^2 \variogram(\step)
+		&= 4 \phi''(\|\step\|^2) \step \step^T + 2\phi'(\|\step\|^2)\identity
+	\end{align*}
+	and therefore \(\nabla^2\variogram(0) = 2\phi'(0)\identity\). Plugging these results
+	into the general formula yields the claim.
+\end{proof}
 
 \subsubsection{Stationarity}
 
@@ -129,15 +177,15 @@ A particularly charming thing about stationarity is, that
 \[
 	\Cov(\Loss(\param), \nabla\Loss(\param))=0,
 \]
-(cf. Lemma~\ref{lem: covariance of derivative}). So we can easily condition
+(cf. Remark~\ref{rem: covariance uncorrelated}). So we can easily ``condition''
 on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 
 \begin{lemma}
-	If \(\Loss\) is a \textbf{stationary, centred} random field, then
+	If \(\Loss\) is a \textbf{stationary, centered} random field, then
 	\begin{align*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
 		&= \frac{\C(\step)}{\C(0)} \Loss(\param)
-		+ [\nabla^2\C(0)]^{-1} \langle \nabla \C(\step), \nabla\Loss(\param)\rangle.
+		+ \nabla\C(\step)^T [\nabla^2\C(0)]^{-1} \nabla\Loss(\param)
 	\\
 	\intertext{
 		if additionally \(\Loss\) is \textbf{isotropic}, i.e.
@@ -146,6 +194,13 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 		&= \frac{\iC(\|\step\|^2)}{\iC(0)} \Loss(\param)
 		+ \frac{\iC'(\|\step\|^2)}{\iC'(0)} \langle \step, \nabla\Loss(\param)\rangle.
 	\end{align*}
+	One could also use the gradient of the loss exclusively
+	\begin{align*}
+		\BLUE[\Loss(\param + \step)\mid \nabla\Loss(\param)]
+		&= [\nabla^2\C(0)]^{-1}\langle\nabla\C(\step), \nabla\Loss(\param)\rangle\\
+		&= \frac{\iC'(\|\step\|^2)}{\iC'(0)}\langle \step, \nabla\Loss(\param)\rangle.
+	\end{align*}
+	I.e. then the estimator does not take the current height into account.
 \end{lemma}
 \begin{proof}
 	As we are assuming a centred \(\Loss\), we know that any  element
@@ -163,7 +218,9 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 			&- 2a\E[\Loss(\param + \step)\Loss(\param)] + a^2 \E[\Loss(\param)^2]\\
 			&- 2\langle b, \E[\Loss(\param + \step)\nabla\Loss(\param)]\rangle
 			+ \langle b, \E[\nabla\Loss(\param)\nabla\Loss(\param)^T] b\rangle\\
-			&- 2a\langle b, \underbrace{\E[\Loss(\param)\nabla\Loss(\param)]}_{=0}\rangle
+			&- 2a\langle b, \underbrace{\E[\Loss(\param)\nabla\Loss(\param)]}_{
+				=0\mathrlap{\text{ (Remark~\ref{rem: covariance uncorrelated})}}
+			}\rangle
 		\end{aligned}\\
 		&=\C(0) - 2a\C(\step) + a^2 \C(0)
 		- 2\langle b, \nabla\C(\step)\rangle
@@ -187,17 +244,11 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 		\nabla^2 \C(\step) &= 4 \iC''(\|\step\|^2) \step \step^T + 2\iC'(\|\step\|^2)\identity
 	\end{align*}
 	and therefore \(\nabla^2\C(0) = 2\iC'(0)\identity\). Plugging these results
-	into the general formula yields the claim.
+	into the general formula yields the claim. For the second claim simply
+	do the same calculation with \(a=0\).
 \end{proof}
-\begin{remark}
-	One could also drop the conditioning on the loss itself
-	\begin{equation*}
-		\BLUE[\Loss(\param + \step)\mid \nabla\Loss(\param)]
-		= [\nabla^2\C(0)]^{-1}\langle\nabla\C(\step), \nabla\Loss(\param)\rangle
-		= \frac{\iC'(\|\step\|^2)}{\iC'(0)}\langle \step, \nabla\Loss(\param)\rangle.
-	\end{equation*}
-	Then the estimator does not take the current height into account.
-\end{remark}
+
+\subsubsection{Minimizing the BLUE in the Rotation Invariant Case}
 
 \begin{corollary}
 	Gradient descent, i.e.

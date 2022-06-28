@@ -73,7 +73,7 @@
 		\Cov(\partial_i\Loss(x), \partial_j \Loss(y)) &= \partial_{x_i y_j} \C(x,y)
 	\end{align*}
 \end{lemma}
-\begin{remark}
+\begin{remark}\label{rem: covariance uncorrelated}
 	For stationary random fields \(\C(x,y)=\C(x-y)\), the covariance
 	function \(\C\) is symmetric, i.e. \(\C(h)=\C(-h)\)
 	and therefore the derivative antisymmetric, i.e.
@@ -90,7 +90,7 @@
 	\(\nabla\Loss(x)\) are independent multivariate gaussian for every \(x\).
 \end{corollary}
 
-\begin{lemma}[Variogram and Derivative]
+\begin{lemma}[Variogram and Derivative]\label{lem: variogram and derivative}
 	Assuming \(Z\) is an intrinsic, stationary, differentiable random field,
 	we have
 	\begin{enumerate}
