@@ -98,9 +98,9 @@ to deal with this
 Since the first approach eventually still leads to the second approach for some
 higher derivative, we will have to guess eventually. The question is: What is
 a good way to guess? If you start with a learning rate which ``\emph{usually}
-works'', then you are already making a probabilistic statement. When drawing a
+works'', then you are already making a probabilistic statement: ``When drawing a
 Loss function from a class of loss functions people are generally interested in,
-a particular learning rate is \emph{likely} to work.
+a particular learning rate is \emph{likely} to work''.
 
 So we want to assume that our loss function \(\Loss\) is the realization of a
 random field.
@@ -117,7 +117,7 @@ of \(\Loss\) one could:
 		\EI(\param) := \E\big[
 			[\hat{\Loss}_n^*- \Loss(\param)]^+
 			\bigm|
-			\Loss(\param_1),\dots, \Loss(\param_n)\
+			\Loss(\param_1),\dots, \Loss(\param_n)
 		\big]
 	\end{equation}
 	over \(\param\), with
