@@ -45,16 +45,17 @@ Other risk functions to minimize are possible, but this is the usual one.
 The most simple BLUE one can think of is given by
 
 \begin{lemma}[One-Step Zero-Order BLUE]\label{lem: one-step zero-order blue}
-	We have
+	For an arbitrary square integrable random field \(\Loss\) with covariance
+	function
+	\begin{equation}\label{def: covariance function}
+		\C(x,y):= \Cov(\Loss(x), \Loss(y)),
+	\end{equation}
+	we have
 	\begin{equation*}
 		\BLUE[\Loss(\param + \step) \mid \Loss(\param)]
 		= \E[\Loss(\param + \step)]
 		+ \frac{\C(\param+\step,\param)}{\C(\param, \param)}
-		\big[\Loss(\param) - \E[\Loss(\param)]\big],
-	\end{equation*}
-	where we define the covariance function \(\C\) to be
-	\begin{equation*}
-		\C(x,y):= \Cov(\Loss(x), \Loss(y)).
+		\big[\Loss(\param) - \E[\Loss(\param)]\big].
 	\end{equation*}
 \end{lemma}
 \fxwarning*{proof}
@@ -101,21 +102,16 @@ we do the following (keep Lemma~\ref{lem: blue is cond. expectation} in mind)
 \end{equation*}
 So if we minimize the BLUE/conditional expectation directly, we essentially fear
 regressing back to a worse state as well, making use even more exploration
-averse. There are good reasons to be this risk averse in a machine learning
-context
-\begin{enumerate}
-	\item we want to avoid overfitting, i.e. we don't want to actually find the
-	global minimum
-	\item if we use stochastic gradients (SGD), we do not know after the step
-	whether we made an improvement or not. So we can not go back to the best
-	point so far.
-\end{enumerate}
-In addition, the BLUE from Lemma~\ref{lem: one-step zero-order blue}
-uses only the last step.
+averse.
 
-This is all nice and well, but why are we doing this? We have learned that we
-can not really gain anything from optimizing the BLUE. Well, at least if we do
-not include more information to construct our estimator...
+The point of this section was to demonstrate that minimizing the
+\(\BLUE\) is not a sophisticated optimization method. Yet, we will see in the
+next section that it results in a gradient descent method with a specific
+learning rate. The main reason why this method is interesting is, that it scales
+much better with higher dimensions and is much cheaper. But there is also the
+fact, that in a stochastic gradient setting we cannot simply go back to
+the minimum so far because we do not know how big the real loss was at any step.
+So in this sense it actually makes sense to fear regression to a worse state.
 
 \subsection{First Order BLUE}
 
@@ -123,7 +119,7 @@ not include more information to construct our estimator...
 
 \begin{lemma}
 	If \(\Loss\) is a \textbf{centered, intrinsically stationary} random field,
-	then
+	with variogram \(\variogram\), then
 	\begin{align*}
 		\BLUE[\underbrace{\Loss(\param+\step) - \Loss(\param)}_{=:\Loss_\param(\step)}
 		\mid \nabla\Loss(\param)]
@@ -189,16 +185,16 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 	\\
 	\intertext{
 		if additionally \(\Loss\) is \textbf{isotropic}, i.e.
-		\(\C(\step)=\iC(\|\step\|^2)\), this reduces to
+		\(\C(\step)=\sqC(\|\step\|^2)\), this reduces to
 	}
-		&= \frac{\iC(\|\step\|^2)}{\iC(0)} \Loss(\param)
-		+ \frac{\iC'(\|\step\|^2)}{\iC'(0)} \langle \step, \nabla\Loss(\param)\rangle.
+		&= \frac{\sqC(\|\step\|^2)}{\sqC(0)} \Loss(\param)
+		+ \frac{\sqC'(\|\step\|^2)}{\sqC'(0)} \langle \step, \nabla\Loss(\param)\rangle.
 	\end{align*}
 	One could also use the gradient of the loss exclusively
 	\begin{align*}
 		\BLUE[\Loss(\param + \step)\mid \nabla\Loss(\param)]
 		&= [\nabla^2\C(0)]^{-1}\langle\nabla\C(\step), \nabla\Loss(\param)\rangle\\
-		&= \frac{\iC'(\|\step\|^2)}{\iC'(0)}\langle \step, \nabla\Loss(\param)\rangle.
+		&= \frac{\sqC'(\|\step\|^2)}{\sqC'(0)}\langle \step, \nabla\Loss(\param)\rangle.
 	\end{align*}
 	I.e. then the estimator does not take the current height into account.
 \end{lemma}
@@ -238,12 +234,12 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 	\begin{align*}
 		\langle b, \nabla^2\C(0) b\rangle = \E[\langle b, \nabla\Loss(\param)\rangle^2] \ge 0.
 	\end{align*}
-	Now we just need to address the \(\C(\step) = \iC(\|\step\|^2)\) case. We have
+	Now we just need to address the \(\C(\step) = \sqC(\|\step\|^2)\) case. We have
 	\begin{align*}
-		\nabla \C(\step) &= 2\iC'(\|\step\|^2) \step\\
-		\nabla^2 \C(\step) &= 4 \iC''(\|\step\|^2) \step \step^T + 2\iC'(\|\step\|^2)\identity
+		\nabla \C(\step) &= 2\sqC'(\|\step\|^2) \step\\
+		\nabla^2 \C(\step) &= 4 \sqC''(\|\step\|^2) \step \step^T + 2\sqC'(\|\step\|^2)\identity
 	\end{align*}
-	and therefore \(\nabla^2\C(0) = 2\iC'(0)\identity\). Plugging these results
+	and therefore \(\nabla^2\C(0) = 2\sqC'(0)\identity\). Plugging these results
 	into the general formula yields the claim. For the second claim simply
 	do the same calculation with \(a=0\).
 \end{proof}
@@ -261,8 +257,8 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 	\begin{equation*}
 		\min_{\step}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
-		= \min_{\lr} \frac{\iC(\lr^2)}{\iC(0)} \Loss(\param)
-		- \frac{\iC'(\lr^2)}{\iC'(0)} \lr \|\nabla\Loss(\param)\|.
+		= \min_{\lr} \frac{\sqC(\lr^2)}{\sqC(0)} \Loss(\param)
+		- \frac{\sqC'(\lr^2)}{\sqC'(0)} \lr \|\nabla\Loss(\param)\|.
 	\end{equation*}
 \end{corollary}
 \begin{proof}
@@ -276,17 +272,17 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
 		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
-		\frac{\iC(\lr^2)}{\iC(0)} \Loss(\param)
-		+ \frac{\iC'(\lr^2)}{\iC'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
+		\frac{\sqC(\lr^2)}{\sqC(0)} \Loss(\param)
+		+ \frac{\sqC'(\lr^2)}{\sqC'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
 		&= \min_{\lr}
-		\frac{\iC(\lr^2)}{\iC(0)} \Loss(\param)
-		+ \frac{\iC'(\lr^2)}{\iC'(0)}
+		\frac{\sqC(\lr^2)}{\sqC(0)} \Loss(\param)
+		+ \frac{\sqC'(\lr^2)}{\sqC'(0)}
 		\underbrace{\min_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
 			= -\eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(optimal by Cauchy-Schwarz)}}
 		}.\hphantom{\text{by Cauchy-Schwarz}}
 	\end{align*}
 	When moving the minimum into the equation we assumed that
-	\(\frac{\iC'(\lr^2)}{\iC'(0)}\ge 0\). But if it was smaller zero, we would get a
+	\(\frac{\sqC'(\lr^2)}{\sqC'(0)}\ge 0\). But if it was smaller zero, we would get a
 	maximization instead, resulting in gradient descent with a negative learning
 	rate.
 \end{proof}

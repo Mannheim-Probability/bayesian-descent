@@ -107,9 +107,9 @@ random field.
 
 \subsection{Bayesian Optimization}
 
-This is the setting assumed in Bayesian Optimization
-\parencite[e.g.][]{frazierBayesianOptimization2018}. \(\Loss\) is a random field
-to find its minimum one could:
+\(\Loss\) being a random field is the setting assumed in Bayesian Optimization
+\parencite[e.g.][]{frazierBayesianOptimization2018}. To find the minimum
+of \(\Loss\) one could:
 
 \begin{enumerate}
 	\item Maximize the \emph{expected improvement} 
@@ -178,51 +178,9 @@ centered Gaussian fandom field. Using this assumption they were able to use an
 analysis of the distribution of critical points of such a random field
 \parencite{brayStatisticsCriticalPoints2007}, to argue, that saddle points are
 much more common in high dimension than local minima, and that the local minima
-that do exist are overwhelmingly likely close to the global minimum. They
-confirmed their predictions about critical points on the MNIST dataset.
-
-\subsection{Motivating Random Losses with Data}
-
-Another way to motivate \(\Loss\) being a random field is: Assume we have some
-random field \(Z\), and randomly pick examples
-\((X,Y) := (X,Z(X))\) from it. The real loss is the conditional expectation on
-\(Z\)
-\begin{equation*}
-	\Loss(\param) = \E[\loss(\param, X,Y)\mid Z].
-\end{equation*}
-Then \(\Loss\) is a random variable for every \(\param\), i.e. a random field.
-As an example, for the mean squared loss using some parametrized model
-\(\model{X}\), we get
-\begin{equation*}
-	\Loss(\param)
-	= \E[\|\model{X} - Y\|^2 \mid Z]
-	= \E[\|\model{X} - Z(X)\|^2 \mid Z].
-\end{equation*}
-To actually work with this model, we need to make some assumptions.
-
-\begin{axiom}
-	\(Z\) is a centred stationary random field, \(X\) and \(Z\) are independent.
-\end{axiom}
-
-If we define
-\begin{equation*}
-	\mu(\param, X):= \E[\loss(\param, X,Y)\mid X],
-\end{equation*}
-e.g. for the mean squared case
-\begin{align*}
-	\mu(\param, X)&= \E[\|\model{X}-Z(X)\|^2 \mid X]\\
-	&= \|\model{X}\|^2 - 2\langle \model{X}, \underbrace{\E[Z(X)\mid X]}_{=0}\rangle
-	+ \underbrace{\E[\|Z(X)\|^2\mid X]}_{=\sigma^2}\\
-	&= \|\model{X}\|^2 + \sigma^2,
-\end{align*}
-then we have by the tower property of conditional expectation
-\begin{equation*}
-	\E[\Loss(\param)]
-	= \E[\loss(\param, X,Y)]
-	= \E[\mu(\param, X)].
-\end{equation*}
-This allows us to center the loss. Or in the mean squared case: if we use no
-information about \(Z\), we can still make sure that \(\Loss\) has constant
-expectation \(\sigma^2\), by subtracting \(\model{X}^2\).
-
+that do exist are overwhelmingly likely close to the global minimum. Intuitively
+in high dimension the Hessian has many eigenvalues, all of which have to be
+positive to result in a local minimum. This only happens when the loss is
+close to the global minimum. They confirmed their predictions about critical
+points on the MNIST dataset.
 

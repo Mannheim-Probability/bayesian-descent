@@ -2,9 +2,9 @@
 
 \subsection{Squared Exponential}
 
-In this section we are going to assume \(\C(\step)=\iC(\|\step\|^2)\) with
+In this section we are going to assume \(\C(\step)=\sqC(\|\step\|^2)\) with
 \begin{align*}
-	\iC(x) = c e^{-ax}.
+	\sqC(x) = c e^{-ax}.
 \end{align*}
 Then the \(\BLUE\) simplifies further
 \begin{align*}
@@ -14,8 +14,8 @@ Then the \(\BLUE\) simplifies further
 \end{align*}
 Recall that the resulting optimization problem was
 \begin{align*}
-	\min_{\lr} \frac{\iC(\lr^2)}{\iC(0)}\Loss(\param)
-	- \frac{\iC'(\lr^2)}{\iC'(0)}\lr \|\nabla\Loss(\param)\|
+	\min_{\lr} \frac{\sqC(\lr^2)}{\sqC(0)}\Loss(\param)
+	- \frac{\sqC'(\lr^2)}{\sqC'(0)}\lr \|\nabla\Loss(\param)\|
 	=\min_{\lr} e^{-a\lr^2}
 	\left[\Loss(\param) - \lr \|\nabla\Loss(\param)\|\right]
 \end{align*}
