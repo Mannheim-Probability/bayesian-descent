@@ -117,7 +117,7 @@ So in this sense it actually makes sense to fear regression to a worse state.
 
 \subsubsection{Intrinsic Stationarity}
 
-\begin{lemma}
+\begin{lemma}\label{lem: blue centered, intrinsically stationary}
 	If \(\Loss\) is a \textbf{centered, intrinsically stationary} random field,
 	with variogram \(\variogram\), then
 	\begin{align*}
@@ -126,7 +126,7 @@ So in this sense it actually makes sense to fear regression to a worse state.
 		&=  \nabla\variogram(\step)^T[\nabla^2\variogram(0)]^{-1}
 		\nabla\Loss(\param)\\
 		\intertext{
-			if the variogram is rotation invariant, i.e.
+			if the variogram is \textbf{rotation invariant}, i.e.
 			\(\variogram(\step)=\phi(\|\step^2\|)\), this simplifies to
 		}
 		&= \frac{\phi'(\|\step\|^2)}{\phi'(0)}
@@ -176,7 +176,7 @@ A particularly charming thing about stationarity is, that
 (cf. Remark~\ref{rem: covariance uncorrelated}). So we can easily ``condition''
 on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 
-\begin{lemma}
+\begin{lemma}\label{lem: blue centered, stationary}
 	If \(\Loss\) is a \textbf{stationary, centered} random field, then
 	\begin{align*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
@@ -190,6 +190,8 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 		&= \frac{\sqC(\|\step\|^2)}{\sqC(0)} \Loss(\param)
 		+ \frac{\sqC'(\|\step\|^2)}{\sqC'(0)} \langle \step, \nabla\Loss(\param)\rangle.
 	\end{align*}
+\end{lemma}
+\begin{remark}
 	One could also use the gradient of the loss exclusively
 	\begin{align*}
 		\BLUE[\Loss(\param + \step)\mid \nabla\Loss(\param)]
@@ -197,7 +199,9 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 		&= \frac{\sqC'(\|\step\|^2)}{\sqC'(0)}\langle \step, \nabla\Loss(\param)\rangle.
 	\end{align*}
 	I.e. then the estimator does not take the current height into account.
-\end{lemma}
+	Since \(\BLUE[\Loss(\param)\mid \nabla\Loss(\param)]=0\) the same holds for
+	the loss difference.
+\end{remark}
 \begin{proof}
 	As we are assuming a centred \(\Loss\), we know that any  element
 	\(\hat{\Loss}(\param + \step)\) from \(\LUE\) has the form
@@ -240,53 +244,120 @@ on both \(\Loss(\param)\) and \(\nabla\Loss(\param)\).
 		\nabla^2 \C(\step) &= 4 \sqC''(\|\step\|^2) \step \step^T + 2\sqC'(\|\step\|^2)\identity
 	\end{align*}
 	and therefore \(\nabla^2\C(0) = 2\sqC'(0)\identity\). Plugging these results
-	into the general formula yields the claim. For the second claim simply
-	do the same calculation with \(a=0\).
+	into the general formula yields the claim.
 \end{proof}
 
-\subsubsection{Minimizing the BLUE in the Rotation Invariant Case}
+\subsection{Minimizing the BLUE in the Rotation Invariant Case}
 
-\begin{corollary}
-	Gradient descent, i.e.
+\begin{lemma}\label{lem: rotation invariant implies GD}
+	Functions of the form
 	\begin{equation*}
-		\step = - \tilde{\lr} \nabla\Loss(\param)
-		= - \frac{\lr}{\|\nabla\Loss(\param)\|} \nabla\Loss(\param)
+		B(\step)
+		= g_0(\|\step\|^2) + g_1(\|\step\|^2)\langle \step, \nabla\Loss(\param)\rangle
 	\end{equation*}
-	minimizes the 1-step 0-order \(\BLUE\) for an isotropic random
-	field for some learning rate \(\tilde{\lr}\), i.e.
-	\begin{equation*}
-		\min_{\step}
-		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]
-		= \min_{\lr} \frac{\sqC(\lr^2)}{\sqC(0)} \Loss(\param)
-		- \frac{\sqC'(\lr^2)}{\sqC'(0)} \lr \|\nabla\Loss(\param)\|.
-	\end{equation*}
-\end{corollary}
+	are minimized by a gradient step, i.e.
+	\begin{align}
+		-\hat{\lr}\frac{\nabla\Loss(\param)}{\|\nabla\Loss(\param)\|}
+		&= \argmin_{\step}B(\step)\\
+		\hat{\lr} &\begin{aligned}[t]
+			&=\argmin_{\lr} B\left(-\lr \tfrac{\nabla\Loss(\param)}{\|\nabla\Loss(\param)\|}\right)\\
+			&= \argmin_{\lr} g_0(\lr^2) -  g_1(\lr^2)\lr\|\nabla\Loss(\param)\|
+		\end{aligned}
+	\end{align}
+\end{lemma}
+
 \begin{proof}
-	Essentially all the occurrences of \(\step\) in our \(\BLUE\) are
+	Essentially all the occurrences of \(\step\) in \(B\) are
 	rotation invariant, so only the step size matters. The only place where that
 	is not the case is the scalar product with the gradient. Therefore it
-	determines the direction, i.e.
+	determines the direction. i.e.
 	\begin{align*}
-		&\min_{\step}
-		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
-		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
-		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
-		&= \min_{\lr}\min_{\step:\|\step\|=\lr}
-		\frac{\sqC(\lr^2)}{\sqC(0)} \Loss(\param)
-		+ \frac{\sqC'(\lr^2)}{\sqC'(0)} \langle \step, \nabla\Loss(\param)\rangle\\
-		&= \min_{\lr}
-		\frac{\sqC(\lr^2)}{\sqC(0)} \Loss(\param)
-		+ \frac{\sqC'(\lr^2)}{\sqC'(0)}
-		\underbrace{\min_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
-			= -\eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(optimal by Cauchy-Schwarz)}}
-		}.\hphantom{\text{by Cauchy-Schwarz}}
+		\min_{\step} B(\step)
+		&= \min_{\lr\ge 0}\min_{\step:\|\step\|=\lr} B(\step)
+		= \min_{\lr\ge 0}\min_{\step:\|\step\|=\lr}
+		g_0(\|\step\|^2)	
+		+ g_1(\|\step\|^2) \langle \step, \nabla\Loss(\param)\rangle\\
+		&= \min_{\lr\ge 0}
+		\begin{cases}
+			g_0(\lr^2)	
+			+ g_1(\lr^2)
+			\underbrace{\min_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
+				= -\eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(Cauchy-Schwarz)}}
+			}\hphantom{\text{Schwarz}} & g_1(\lr^2) \ge 0
+			\\
+			g_0(\lr^2)	
+			+ g_1(\lr^2)
+			\underbrace{\max_{\step:\|\step\|=\lr}\langle \step, \nabla\Loss(\param)\rangle}_{
+				= \eta \|\nabla \Loss(\param)\| \quad \mathrlap{\text{(Cauchy-Schwarz)}}
+			}\hphantom{\text{Schwarz}} & g_1(\lr^2) < 0
+		\end{cases}\\
+		&= \min_{\lr} g_0(\lr^2)	
+			- g_1(\lr^2)\lr \|\nabla\Loss(\param)\|.
+		\qedhere
 	\end{align*}
-	When moving the minimum into the equation we assumed that
-	\(\frac{\sqC'(\lr^2)}{\sqC'(0)}\ge 0\). But if it was smaller zero, we would get a
-	maximization instead, resulting in gradient descent with a negative learning
-	rate.
 \end{proof}
 
+\begin{theorem}[Bayesian Descent]\label{thm: bayesian descent}
+	Gradient descent, i.e. 
+	\begin{equation*}
+		\step(\lr) = - \tilde{\lr} \nabla\Loss(\param)
+		= - \frac{\lr}{\|\nabla\Loss(\param)\|} \nabla\Loss(\param)
+	\end{equation*}
+	minimizes the 1-step 0-order \(\BLUE\) of rotation invariant random fields
+	\(\Loss\) in the following sense
+	\begin{enumerate}
+		\item for a \textbf{centered, intrinsically stationary} random field
+		\(\Loss\) with \textbf{rotation invariant} variogram \(\variogram(\step) =
+		\phi(\|\step\|^2)\), we have
+		\begin{align*}
+			\step(\hat{\lr})
+			&= \argmin_{d}
+			\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \nabla\Loss(\param)]\\
+			\hat{\lr}
+			&= \argmax_{\lr} \lr\frac{\phi'(\lr^2)}{\phi'(0)}
+		\end{align*}
 
 
+		\item for a \textbf{centered, isotropic} random field \(\Loss\) with
+		\(\C(\step)=C(\|\step\|^2)\), we have
+		\begin{align*}
+			\step(\hat{\lr})
+			&= \argmin_{d}
+			\BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\\
+			\hat{\lr}
+			&= \argmin_{\lr}\frac{\sqC(\lr^2)}{\sqC(0)} \frac{\Loss(\param)}{\|\nabla\Loss(\param)\|}
+		-  \lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
+		\end{align*}
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	We simply apply Lemma~\ref{lem: rotation invariant implies GD}	to the results
+	from Lemma~\ref{lem: blue centered, intrinsically stationary} and \ref{lem:
+	blue centered, stationary} and note that the minimizer does not change if
+	we divide the minimization problem by \(\|\nabla\Loss(\param)\|\).
+\end{proof}
+
+\subsection{Scale Invariance}
+
+A desirable property of optimization algorithms is `scale invariance'. I.e.
+the algorithm should result in the same steps if applied to
+\(\tilde{\Loss}=c\Loss\) for some \(c\in\real\). This is the case for the
+Newton method but not for the standard gradient descent method. But if we have
+a closer look at Theorem~\ref{thm: bayesian descent}, we see that
+\(\step(\lr)\) does not change under scaling as the constant would appear both
+in the gradient and the denominator with the norm around the gradient. So
+if \(\hat{\lr}\) stays the same, we would get the exact same step. But
+due to
+\begin{equation*}
+	\tilde{\C}(x,y) = \Cov(c\Loss(x), c\Loss(y)) = c^2 \C(x,y)
+\end{equation*}
+we have
+\begin{equation*}
+	\frac{\tilde{\sqC}(\lr^2)}{\tilde{\sqC}(0)}=\frac{\sqC(\lr^2)}{\sqC(0)}
+\end{equation*}
+and similarly for \(\sqC'\) and \(\phi'\). So Bayesian Descent is scale
+invariant.
+
+\fxnote{More invariants? Compare with Natural Gradient Descent?}
 
