@@ -133,6 +133,13 @@ So in this sense it actually makes sense to fear regression to a worse state.
 		\langle \step, \nabla\Loss(\param)\rangle
 	\end{align*}
 \end{lemma}
+\begin{remark}
+	If \(\Loss\) is stationary we have \(\gamma(\step) = \C(0) - \C(\step)\)
+	Therefore \(\nabla\gamma = - \nabla\C\) and \(\nabla^2\gamma = -\nabla^2\C\)
+	which means we can replace the variogram with the covariance in this case.
+\end{remark}
+
+
 \begin{proof}
 	As we know \(\Loss\) is centered, we know that any element
 	\(\hat{\Loss}(\param+\step)\) from \(\LUE\) has the form \(\langle b,
