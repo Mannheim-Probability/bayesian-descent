@@ -149,3 +149,44 @@ and therefore
 	Substituting \(Q\) with its definition and moving \(\frac12\) out of the
 	bracket yields the claim.
 \end{proof}
+
+\subsection{Schlather-Moreva}
+
+To bridge bounded variograms (stationary random fields) and
+unbounded variograms (intrinsically stationary but not stationary random fields)
+\textcite{schlatherParametricModelBridging2017} suggest
+\begin{equation*}
+	\variogram_{\alpha,\beta}(\step)
+	= \frac{(1+\|\step\|^\alpha)^{\beta/\alpha}-1}{2^{\beta/\alpha}-1}
+	\quad \alpha\in (0,2],\ \beta\in(-\infty, 2].
+\end{equation*}
+Since the model only results in a differentiable random field for \(\alpha=2\),
+we will only consider \(\variogram_\beta(\step) := \variogram_{2,\beta}(\step) = \phi(\|\step\|^2)\),
+with
+\begin{equation*}
+	\phi(x) = \frac{(1+x)^{\beta/2} -1}{2^{\beta/2}-1}.
+\end{equation*}
+Taking its derivative results in
+\begin{equation*}
+	\phi'(x) = \frac{\tfrac\beta2 (1+x)^{\tfrac\beta2 -1}}{2^{\beta/2}-1}
+\end{equation*}
+which implies that
+\begin{align*}
+	\hat{\lr} = \argmax_\lr \lr\frac{\phi'(\lr^2)}{\phi'(\lr)}
+	= \argmax_\lr \lr(1+\lr^2)^{\tfrac\beta2 -1}.
+\end{align*}
+For \(\beta \ge 1\) this function is monotonically increasing in \(\lr\) and
+we would therefore have \(\hat{\lr} = \infty\), so only the case \(\beta <1\)
+is interesting\fxwarning{explanation for \(\beta\ge 1\)?}. Taking the derivative with regard to
+\(\lr\) results in
+\begin{align*}
+	0 \overset!=\frac{d}{d\lr}
+	&= (1+\lr^2)^{\frac\beta2 -2} \left[(1+\lr^2) - 2\lr^2\Big(1-\frac\beta2\Big)\right]\\
+	&= (1+\lr^2)^{\frac\beta2 -2} \left[1 - \lr^2(1-\beta)\right]
+\end{align*}
+So we get
+\[
+	\hat{\lr} = \frac1{\sqrt{1-\beta}}.
+\]
+As we can see that the derivative is larger than zero before and smaller
+afterwards it is indeed a maximum.
