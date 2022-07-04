@@ -6,15 +6,15 @@
 	\label{def: variogram}
 	A random field \(Z\), for which
 	\[
-		\tilde{Z}(x) = Z(x+\step)- Z(x)
+		Z_\step(x) = Z(x+\step)- Z(x)
 	\]
 	is stationary for every \(\step\), is called \emph{intrinsically stationary}.
 	For any intrinsically stationary random field, the \emph{(centred) variogram} is
 	defined as
 	\[
-		\variogram(\step)	= \tfrac12\Var(Z(x+\step)-Z(x)),
+		\variogram(\step)	= \tfrac12\Var(Z_\step(x)),
 	\]
-	which is independent of \(x\) due to stationarity of \(\tilde{Z}\). For the
+	which is independent of \(x\) due to stationarity of \(Z_\step\). For the
 	uncentered variogram use uncentered second moments instead of the variance.
 \end{definition}
 
@@ -23,7 +23,7 @@
 	If \(Z\) is intrinsically stationary we have for \(Y_s := Z - Z(s)\)
 	and
 	\[
-		\C_s(x,y) := \Cov(Y_s(x), Y_s(y))
+		\C_s(x,y) := \Cov(Y_s(x), Y_s(y)) = \Cov(Z_{x-s}(s), Z_{y-s}(s))
 	\]
 	an explicit representation using the variogram
 	\begin{align*}
@@ -35,7 +35,7 @@
 \begin{remark}[Antisymmetry]\label{rem: grad variogram antisymmetric}
 	We therefore have \(\variogram(x-y) = \variogram(y-x)\) or in other words
 	the variogram is symmetric. So if it is differentiable, then
-	\(\nabla\variogram\) is antisymmetric with \(\nabla\variogram(0)=0\).
+	\(\grad\variogram\) is antisymmetric with \(\grad\variogram(0)=0\).
 \end{remark}
 \begin{proof}[Proof (by Schlather?)]\fxnote{source?}
 	Assume \(Z\) is centred without loss of generality, otherwise center \(Z\)
@@ -80,7 +80,7 @@
 	and therefore the derivative antisymmetric, i.e.
 	\(\partial_i\C(-h)=-\partial_i\C(h)\). In particular
 	\begin{equation*}
-		\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
+		\Cov(\grad\Loss(x), \Loss(x)) = \grad \C(0)=0.
 	\end{equation*}
 \end{remark}
 \begin{proof}
@@ -88,7 +88,7 @@
 \end{proof}
 \begin{corollary}[Gaussian Case]
 	If \(\Loss\) is a stationary gaussian random field, \(\Loss(x)\) and
-	\(\nabla\Loss(x)\) are independent multivariate gaussian for every \(x\).
+	\(\grad\Loss(x)\) are independent multivariate gaussian for every \(x\).
 \end{corollary}
 
 \begin{lemma}[Variogram and Derivative]\label{lem: variogram and derivative}
@@ -96,9 +96,12 @@
 	we have
 	\begin{enumerate}
 		\item \(
-			\Cov(Z(x+\step)-Z(x), \nabla Z(x)) = \nabla\variogram(\step)
+			\Cov(Z(x+\step)-Z(x), \grad Z(x)) = \grad\variogram(\step)
 		\)
-		\item \(\Cov(\nabla Z(x), \nabla Z(y)) = \nabla^2\variogram(x-y)\)
+		\item \(\Cov(\grad Z(x), \grad Z(y)) = \grad^2\variogram(x-y)\)
+		(this implies \(\grad Z\) is stationary)
+		\item \(\Cov(Z(x+\step)-Z(x),\hessian Z(x))
+		= \hessian\variogram(0) - \hessian\variogram(\step)\)
 	\end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -130,9 +133,47 @@
 		\partial_{y_j x_i} [\variogram(x-s) + \variogram(y-s) - \variogram(x-y)]\\
 		&= \partial_{y_j} [\partial_i\variogram(x-s) - \partial_i\variogram(x-y)]\\
 		&= \partial_{ij}\variogram(x-y).
-		\qedhere
 	\end{align*}
 
+	\item Using the previous results about gradients, we get
+	\begin{align*}
+		&\tfrac1h\Cov(\grad Z(x+h e_i) -\grad Z(x), Z_\step(x))\\
+		&= \tfrac1h\begin{aligned}[t]
+			\bigg[&\Cov(\grad Z(x+h e_i), Z(x+\step) - Z(x+h e_i))\\
+			&+ \Cov(\grad Z(x+h e_i), Z(x+h e_i) - Z(x))\\
+			&- \Cov(\grad Z(x), Z_x(\step))\bigg]
+		\end{aligned}
+		\\
+		&= \tfrac1h[\grad\variogram(\step - h e_i) - \grad\variogram(-h e_i) - \grad(\step)]\\
+		&= \tfrac1h[(\grad\variogram(h e_i) - \grad\variogram(0)) -(\grad\variogram(\step) - \grad\variogram(\step -h e_i))]\\
+		&\to \partial_i\grad\variogram(0) - \partial_i\grad\variogram(\step)
+	\end{align*}
+	where we have used antisymmetry of \(\grad\variogram\) for the last equation.
+	\qedhere
+
 	\end{enumerate}
+
+	\begin{lemma}[Derivatives of Rotation Invariant Variograms]
+	\label{lem: derivatives of rotation invariant variograms}
+		For a rotation invariant variogram \(\variogram(\step) = \phi(\|\step\|^2)\),
+		we have
+		\begin{enumerate}
+			\item
+			\(\grad \variogram(\step) = 2\phi'(\|\step\|^2) \step\)
+			\item
+			\(\grad^2 \variogram(\step)
+			= 4 \phi''(\|\step\|^2) \step \step^T + 2\phi'(\|\step\|^2)\identity\)
+			\item
+			\(\partial_{kij}\variogram(\step) = 8\phi'''(\|\step\|^2)\step_k\step_i\step_j
+			+ 4\phi''(\|\step\|^2)[\delta_{ki}\step_j + \delta_{kj}\step_i + \delta_{ij}\step_k]
+			\)
+			\item
+			\(\partial_{lkij}\variogram(0)
+			= 4\phi''(0)[\delta_{ki}\delta_{jl} + \delta_{kj}\delta_{il} + \delta_{ij}\delta_{kl}]\)
+		\end{enumerate}
+	\end{lemma}
+	\begin{proof}
+		Product and chain rule.
+	\end{proof}
 
 \end{proof}

@@ -12,15 +12,15 @@ The approximations are typically simple, easy to minimize functions.
 		\hat{\Loss}_{N}(\param + \step)
 		:= T^2_\param \Loss(\param + \step)
 		= \Loss(\param)
-		+ \langle \nabla\Loss(\param), \step\rangle
-		+ \tfrac12 \langle \nabla^2\Loss(\param) \step, \step\rangle.
+		+ \langle \grad\Loss(\param), \step\rangle
+		+ \tfrac12 \langle \grad^2\Loss(\param) \step, \step\rangle.
 	\end{equation*}
 	Optimizing \(\hat{\Loss}_{N}\) yields
 	\begin{equation*}
-		\step^*_{N} := -[\nabla^2\Loss(\param)]^{-1}\nabla\Loss(\param)
+		\step^*_{N} := -[\grad^2\Loss(\param)]^{-1}\grad\Loss(\param)
 		= \argmin_\step \hat{\Loss}_{N}(\param + \step),
 	\end{equation*}
-	assuming the hessian \(\nabla^2\Loss(\param)\) is strictly positive definite.
+	assuming the hessian \(\grad^2\Loss(\param)\) is strictly positive definite.
 
 	\item
 	Gradient Descent on the other hand is more conservative when it comes to its
@@ -28,12 +28,12 @@ The approximations are typically simple, easy to minimize functions.
 	the approximation error of the first Taylor approximation implies 
 	\begin{equation}\label{eq: T1 error}
 		|\Loss(\param+\step) - T^1_\param \Loss(\param+\step)|
-		= \left| \frac 12 \int_0^1 \step^T \nabla^2\Loss(\param + \lambda \step)\step d\lambda\right|
+		= \left| \frac 12 \int_0^1 \step^T \grad^2\Loss(\param + \lambda \step)\step d\lambda\right|
 		\le \tfrac{\ubound}2 \|\step\|^2,
 	\end{equation}
-	assuming \(\nabla^2\Loss \preceq \ubound\identity\) in the sense that \(\ubound\identity
-	- \nabla^2\Loss(\param)\) is weakly positive definite for all \(\param\). Or
-	equivalently: assuming all eigenvalues of \(\nabla^2\Loss\) are smaller than
+	assuming \(\grad^2\Loss \preceq \ubound\identity\) in the sense that \(\ubound\identity
+	- \grad^2\Loss(\param)\) is weakly positive definite for all \(\param\). Or
+	equivalently: assuming all eigenvalues of \(\grad^2\Loss\) are smaller than
 	\(\ubound\). From this we obtain
 	\begin{equation*}
 		\Loss(\param + \step) \le \hat{\Loss}_G(\param+\step)
@@ -42,7 +42,7 @@ The approximations are typically simple, easy to minimize functions.
 	with the approximation \(\hat{\Loss}_{G}\), we again find an analytical
 	solution
 	\begin{equation*}
-		\step^*_{G} := - \frac1\ubound \nabla\Loss(\param)
+		\step^*_{G} := - \frac1\ubound \grad\Loss(\param)
 		= \argmin_\step \hat{\Loss}_{G}(\param + \step).
 	\end{equation*}
 \end{itemize}
@@ -59,7 +59,7 @@ to deal with this
 \begin{enumerate}
 	\item \textbf{Estimate and Bound}: We need the Hessian over the entire distance
 	from \(\param\) to \(\param + \step\) to bound our approximation error in
-	\eqref{eq: T1 error}, but maybe \(\nabla^2\Loss(\param)\) is a good enough
+	\eqref{eq: T1 error}, but maybe \(\grad^2\Loss(\param)\) is a good enough
 	estimate? It might be, if the Hessian does not change too fast. So we need
 	to bound the rate of change of the Hessian\footnote{
 		``Cubic regularization'' is how \textcite[Section
