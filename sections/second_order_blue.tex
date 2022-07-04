@@ -13,7 +13,7 @@
 	\begin{equation*}
 		c_{ij} =
 			- \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_j
-			+ \frac{\delta_{ij}}{n+2}\left[
+			+ \frac{\delta_{ij}}{\dimension+2}\left[
 				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
 				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
 			\right].
@@ -25,11 +25,11 @@
 			\frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
 			- \frac{\phi''(\|\step\|^2)}{\phi''(0)} \frac12\langle \hessian\Loss(\param)\step, \step\rangle
 		}_{\text{Taylor-like}}\\
-		&+ \frac{1}{n+1}\left[
+		&+ \frac{1}{\dimension+2}\left[
 				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
 				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
 		\right]
-		\sum_{i} \partial_{ii}\Loss(\param).
+		\|\diag(\hessian \Loss(\param))\|
 	\end{aligned}
 	\end{equation*}
 \end{lemma}
@@ -122,16 +122,16 @@
 	\begin{equation*}
 		\diag(c)
 		= - \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\sum_{i}\step_i^2
-		- \frac{n}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
-		- \frac{n}2 \diag(c)
+		- \frac{\dimension}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
+		- \frac{\dimension}2 \diag(c)
 	\end{equation*}
 	implies
 	\begin{equation*}
 		\diag(c)
 		= - \frac{
 			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\sum_{i}\step_i^2
-			+ \frac{n}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
-		}{1+\frac{n}2}.
+			+ \frac{\dimension}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
+		}{1+\frac{\dimension}2}.
 	\end{equation*}
 	So we finally end up with
 	\begin{equation*}
@@ -142,8 +142,8 @@
 			\frac{\tfrac12[\phi'(\|\step\|^2)-\phi'(0)]}{2\phi''(0)}
 			- \frac{
 				\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\sum_{i}\step_i^2
-				+ \frac{n}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
-			}{2(1+\frac{n}2)}
+				+ \frac{\dimension}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
+			}{2(1+\frac{\dimension}2)}
 			\right]}_{=:\Rom{1}}.
 		\end{aligned}
 	\end{equation*}
@@ -151,11 +151,11 @@
 	\begin{align*}
 		\Rom{1}
 		&= 
-		\left(1- \frac{n}{2+n}\right)\frac{\tfrac12[\phi'(\|\step\|^2)-\phi'(0)]}{2\phi''(0)}
+		\left(1- \frac{\dimension}{2+\dimension}\right)\frac{\tfrac12[\phi'(\|\step\|^2)-\phi'(0)]}{2\phi''(0)}
 		- \frac{
 			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
-		}{2+n}\\
-		&= \frac1{2+n}\left[
+		}{2+\dimension}\\
+		&= \frac1{2+\dimension}\left[
 		\frac{\phi'(\|\step\|^2)-\phi'(0)}{2\phi''(0)}
 		-
 			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
