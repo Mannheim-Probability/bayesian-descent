@@ -30,9 +30,9 @@ an explicit formula.
 \begin{lemma}
 	For a stationary, centered loss \(\Loss\) we have
 	\begin{align*}
-		&\E[\|\Loss(\param + \step) - \BLUE[\Loss(\param + \step)\mid \Loss(\param), \nabla\Loss(\param)]\|^2]\\
+		&\E[\|\Loss(\param + \step) - \BLUE[\Loss(\param + \step)\mid \Loss(\param), \grad\Loss(\param)]\|^2]\\
 		&= \C(0)\Big[1- \left(\frac{C(\step)}{C(0)}\right)^2\Big]
-		- \left\langle \nabla\C(\step), [-\nabla^2\C(0)]^{-1} \nabla\C(\step)\right\rangle
+		- \left\langle \grad\C(\step), [-\grad^2\C(0)]^{-1} \grad\C(\step)\right\rangle
 	\end{align*}
 	in the isotropic case this simplifies to
 	\begin{align*}

@@ -35,7 +35,7 @@
 \begin{remark}[Antisymmetry]\label{rem: grad variogram antisymmetric}
 	We therefore have \(\variogram(x-y) = \variogram(y-x)\) or in other words
 	the variogram is symmetric. So if it is differentiable, then
-	\(\nabla\variogram\) is antisymmetric with \(\nabla\variogram(0)=0\).
+	\(\grad\variogram\) is antisymmetric with \(\grad\variogram(0)=0\).
 \end{remark}
 \begin{proof}[Proof (by Schlather?)]\fxnote{source?}
 	Assume \(Z\) is centred without loss of generality, otherwise center \(Z\)
@@ -80,7 +80,7 @@
 	and therefore the derivative antisymmetric, i.e.
 	\(\partial_i\C(-h)=-\partial_i\C(h)\). In particular
 	\begin{equation*}
-		\Cov(\nabla\Loss(x), \Loss(x)) = \nabla \C(0)=0.
+		\Cov(\grad\Loss(x), \Loss(x)) = \grad \C(0)=0.
 	\end{equation*}
 \end{remark}
 \begin{proof}
@@ -88,7 +88,7 @@
 \end{proof}
 \begin{corollary}[Gaussian Case]
 	If \(\Loss\) is a stationary gaussian random field, \(\Loss(x)\) and
-	\(\nabla\Loss(x)\) are independent multivariate gaussian for every \(x\).
+	\(\grad\Loss(x)\) are independent multivariate gaussian for every \(x\).
 \end{corollary}
 
 \begin{lemma}[Variogram and Derivative]\label{lem: variogram and derivative}
@@ -96,9 +96,9 @@
 	we have
 	\begin{enumerate}
 		\item \(
-			\Cov(Z(x+\step)-Z(x), \nabla Z(x)) = \nabla\variogram(\step)
+			\Cov(Z(x+\step)-Z(x), \grad Z(x)) = \grad\variogram(\step)
 		\)
-		\item \(\Cov(\nabla Z(x), \nabla Z(y)) = \nabla^2\variogram(x-y)\)
+		\item \(\Cov(\grad Z(x), \grad Z(y)) = \grad^2\variogram(x-y)\)
 	\end{enumerate}
 \end{lemma}
 \begin{proof}
