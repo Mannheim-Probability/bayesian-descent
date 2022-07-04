@@ -5,13 +5,146 @@
 	differentiable} random field, with \textbf{rotation invariant} variogram
 	\(\variogram\) of the form \(\variogram(\step)=\phi(\|\step\|^2)\), then
 	\begin{equation*}
-	\begin{aligned}
-		\BLUE[\Loss(\param + \step)\mid \grad\Loss(\param), \hessian\Loss(\param)]
-		&= \frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
-		+ 
-	\end{aligned}
+		\BLUE[\Loss_\param(\step)\mid \grad\Loss(\param), \hessian\Loss(\param)]
+		= \frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
+		+ \sum_{ij}\partial_{ij}\Loss(\param)c_{ij}
+	\end{equation*}
+	with
+	\begin{equation*}
+		c_{ij} =
+			- \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_j
+			+ \frac{\delta_{ij}}{n+2}\left[
+				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
+				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
+			\right].
 	\end{equation*}
 \end{lemma}
 \begin{proof}
-	
+	We have
+	\begin{equation*}
+		\hat{\Loss}_\param(\step)
+		= \langle b, \grad\Loss(\param)\rangle
+		+ \underbrace{\sum_{ij} \partial_{ij}\Loss(\param) c_{ij}}_{
+			=: \langle \hessian\Loss(\param), c\rangle}
+	\end{equation*}
+	where due to \(\partial_{ij}\Loss = \partial_{ji}\Loss\) only the sum \(c_{ij} + c_{ji}\) matters
+	and we can assume without loss of generality \(c_{ij} = c_{ji}\). We want to
+	minimize
+	\begin{align*}
+		g(b, c)
+		&= \E[\|\Loss_\param(\step) - \hat{\Loss}_\param(\step)\|^2]\\
+		&= \begin{aligned}[t]
+			&\E[\Loss_\param(\step)^2]\\
+			&- 2\langle b , \E[\Loss_\param(\step)\grad\Loss(\step)]\rangle
+			+ \langle b, \E[\grad\Loss(\param) \grad\Loss(\param)^T]b\rangle \\
+			& - \langle \E[\Loss_\param(\step)\hessian\Loss(\param)], c \rangle
+			+ \E\left[\bigg(\sum_{i,j} \partial_{ij}\Loss(\param) c_{ij}\bigg)^2\right]
+		\end{aligned}\\
+		\overset{\text{Lem~\ref{lem: variogram and derivative}}}&= 2\variogram(\step)
+		\begin{aligned}[t]
+		&- 2\langle b, \grad\variogram(\step)\rangle
+		+ \langle b, \hessian\variogram(0) b\rangle\\
+		&- 2\langle \hessian\variogram(0) - \hessian\variogram(\step), c\rangle
+		+ \sum_{l,k,i,j} \partial_{lkij} \variogram(0) c_{lk}c_{ij}
+		\end{aligned}
+	\end{align*}
+	where we have used the fact that the first and second derivative are uncorrelated.
+	Since \(b\) and \(c\) are in this sense independent form each other, optimizing
+	\(g\) over \(b\) results in the same factor as in Lemma~\ref{lem: blue
+	centered, intrinsically stationary}. So we just need to consider the optimization
+	over \(c\). The first order condition is
+	\begin{equation*}
+		0 \overset!= \frac12\frac{dg}{dc_{ij}}
+		= - \partial_{ij}[\variogram(0) - \variogram(\step)]
+		+ \sum_{l,k} \partial_{lkij}\variogram(0) c_{lk}
+	\end{equation*}
+	As we are in the rotational invariant case \(\variogram(\step) = \phi(\|\step\|)\)
+	we have (Lemma~\ref{lem: derivatives of rotation invariant variograms})
+	\begin{align*}
+		\partial_{ij}\variogram(\step)
+		&= 4\phi''(\|\step\|^2)\step_i\step_j + 2\phi'(\|\step\|^2)\delta_{ij}\\
+		\partial_{lkij}\variogram(0)
+		&=4\phi''(0)[\delta_{ki}\delta_{jl} + \delta_{kj}\delta_{il} + \delta_{ij}\delta_{kl}].
+	\end{align*}
+	Which simplifies our first order condition to
+	\begin{align*}
+		0 \overset!= \frac12\frac{dg}{dc_{ij}}
+		&= \begin{aligned}[t]
+			&4\phi''(\|\step\|^2)\step_i\step_j + 2\phi'(\|\step\|^2)\delta_{ij}
+			- 2\phi'(0)\delta_{ij}\\
+			&+ 4\phi''(0)\sum_{l,k}[\delta_{ki}\delta_{jl} + \delta_{kj}\delta_{il} + \delta_{ij}\delta_{kl}]c_{lk}
+		\end{aligned}\\
+		&= \begin{aligned}[t]
+			&4\phi''(\|\step\|^2)\step_i\step_j + 2[\phi'(\|\step\|^2)-\phi'(0)]\delta_{ij}\\
+			&+ 4\phi''(0)\left[c_{ji} + c_{ij} + \delta_{ij}\diag(c)\right]
+		\end{aligned}
+	\end{align*}
+	Taking another derivative in \(c\) results in a multiple of \(4\phi''(0)\)
+	which is greater zero. Therefore our first order condition describes a
+	minimum. Recall that we have have assumed \(c_{ij} = c_{ji}\) without
+	loss of generality. So for \(i\neq j\) we have
+	\begin{equation*}
+		0\overset!= \phi''(\|\step\|^2)\step_i\step_j + 2\phi''(0)c_{ij}
+	\end{equation*}
+	which implies
+	\begin{equation*}
+		c_{ij} = - \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_j.
+	\end{equation*}
+	On the diagonal on the other hand
+	\begin{equation*}
+		0\overset!= \phi''(\|\step\|^2)\step_i\step_i + \tfrac12[\phi'(\|\step\|^2)-\phi'(0)]
+		+ \phi''(0)[2c_{ii} + \diag(c)]
+	\end{equation*}
+	which implies
+	\begin{equation*}
+		c_{ii} = -\left[
+			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_i
+			+ \frac{\tfrac12[\phi'(\|\step\|^2)-\phi'(0)]}{2\phi''(0)}
+			+ \frac{\diag(c)}{2}
+		\right].
+	\end{equation*}
+	Of course this is still recursive due to the diagonal. But	
+	\begin{equation*}
+		\diag(c)
+		= - \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\sum_{i}\step_i^2
+		- \frac{n}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
+		- \frac{n}2 \diag(c)
+	\end{equation*}
+	implies
+	\begin{equation*}
+		\diag(c)
+		= - \frac{
+			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\sum_{i}\step_i^2
+			+ \frac{n}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
+		}{1+\frac{n}2}.
+	\end{equation*}
+	So we finally end up with
+	\begin{equation*}
+		c_{ij} =
+		\begin{aligned}[t]
+			&- \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_j\\
+			&- \delta_{ij}\underbrace{\left[
+			\frac{\tfrac12[\phi'(\|\step\|^2)-\phi'(0)]}{2\phi''(0)}
+			- \frac{
+				\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\sum_{i}\step_i^2
+				+ \frac{n}2\frac{\phi'(\|\step\|^2) - \phi'(0)}{2\phi''(0)}
+			}{2(1+\frac{n}2)}
+			\right]}_{=:\Rom{1}}.
+		\end{aligned}
+	\end{equation*}
+	where we can further simplify \(\Rom{1}\) to
+	\begin{align*}
+		\Rom{1}
+		&= 
+		\left(1- \frac{n}{2+n}\right)\frac{\tfrac12[\phi'(\|\step\|^2)-\phi'(0)]}{2\phi''(0)}
+		- \frac{
+			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
+		}{2+n}\\
+		&= \frac1{2+n}\left[
+		\frac{\phi'(\|\step\|^2)-\phi'(0)}{2\phi''(0)}
+		-
+			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
+		\right].
+		\qedhere
+	\end{align*}
 \end{proof}
