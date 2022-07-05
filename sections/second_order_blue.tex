@@ -25,7 +25,7 @@
 			\frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
 			- \frac{\phi''(\|\step\|^2)}{\phi''(0)} \frac12\langle \hessian\Loss(\param)\step, \step\rangle
 		}_{\text{Taylor-like}}\\
-		&+ \frac{\|\diag(\hessian \Loss(\param))\|^2}{\dimension+2}\left[
+		&+ \frac{\trace(\hessian \Loss(\param))}{\dimension+2}\left[
 				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
 				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
 		\right]
