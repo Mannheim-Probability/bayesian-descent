@@ -1,2 +1,125 @@
-\subsection{Matern}
+\subsection{Matérn}
+
+The Matérn model \(\C_\nu\) encompasses the nugget effect for \(\nu=0\),
+the exponential model for \(\nu=\tfrac12\) and the squared exponential model
+for \(\nu=\infty\). The smoothness of the model increases with increasing
+\(\nu\). While the exponential covariance model results in a random field which
+is not yet differentiable, larger \(\nu\) result in higher and higher
+differentiability. For \(\nu = p+\tfrac12\) with \(p\in\nat_0\) there exists the
+simplified formula
+\begin{align}
+	\C_{p+\tfrac12}(\|\step\|)
+	&= \sigma^2 \exp\left(- \tfrac{\sqrt{2p+1} \|\step\|}{s}\right)\tfrac{p!}{(2p)!}
+	\sum_{k=0}^p \tfrac{(2p-k)!}{(p-k)!k!}\left(\tfrac{2\sqrt{2p+1}}{s}\|\step\|\right)^k
+	\nonumber
+	\\
+	\label{eq: matern abstractions}
+	&= \sigma^2 \exp\left(- \mf(\|\step\|)\right)
+	\sum_{k=0}^p \underbrace{\tfrac{p!}{(2p)!}\tfrac{(2p-k)!}{(p-k)!k!}2^k}_{=:\mcoeff(k)}
+	\mf(\|\step\|)^k
+\end{align}
+With this we can take the derivative
+\begin{align*}
+	\C_{p+\frac12}'(\lr)
+	&= -\sigma^2\exp(-\mf(\lr))\mf'(\lr)\underbrace{\bigg[
+		\sum_{k=0}^p\mcoeff(k)\mf(\lr)^k
+		- \sum_{k=1}^p \mcoeff(k)k\mf(\lr)^{k-1}
+	\bigg]}_{
+		=\mcoeff(p)\mf(\lr)^p + \sum_{k=0}^{p-1}[ \mcoeff(k) - (k+1)\mcoeff(k+1) ]\mf(\lr)^k
+	}\\
+	\overset{\eqref{def: dcoeff}}&=
+	-\sigma^2\exp\Big(-\mf(\lr)\Big)\mf'(\lr)\sum_{k=0}^p \dcoeff(k-1)\mf(\lr)^k\\
+	\overset{\eqref{eq: dcoeff(k)}}&=
+	-\sigma^2\exp\Big(-\mf(\lr)\Big)\mf'(\lr)\sum_{k=0}^{p-1} \dcoeff(k)\mf(\lr)^{k+1}\\
+	&=-\frac{\sigma^2(2p+1)}{s^2}\lr\exp\Big(-\mf(\lr)\Big)\sum_{k=0}^{p-1} \dcoeff(k)\mf(\lr)^k.
+\end{align*}
+Where we used \(\mf'(\lr)\mf(\lr) = \tfrac{2p+1}{s^2}\lr\) and define
+\begin{equation}\label{def: dcoeff}
+	\dcoeff(k):= \begin{cases}
+		\mcoeff(k+1) - (k+2)\mcoeff(k+2) & k\le p-2\\
+		\mcoeff(p) & k = p-1
+	\end{cases}
+\end{equation}
+and note that
+\begin{align}
+	\nonumber
+	\dcoeff(k)
+	&= \mcoeff(k+1) - (k+2)\mcoeff(k+2)\\
+	\nonumber
+	&= \frac{p}{(2p)!}\left[
+		\frac{(2p-(k+1))!}{(p-(k+1))!(k+1)!}2^{k+1}
+		- (k+2)\frac{(2p-(k+2))!}{(p-(k+2))!(k+2)!}2^{k+2}
+	\right]\\
+	\nonumber
+	&= \frac{p}{(2p)!}\frac{(2p - (k+2))!}{(p-(k+1))!(k+1)!}2^{k+1}
+	\bigg[(2p-(k+1))- (p-(k+1))2^1\bigg]\\
+	\nonumber
+	&= \frac{p}{(2p)!}\frac{(2(p-1) -k)!}{((p-1)-k)!(k+1)!}2^{k+1}[k+1]\\
+	\label{eq: dcoeff(k)}
+	&= \begin{cases}
+		% \frac{2p}{(2p)!}\frac{(2(p-1) -k)!}{((p-1)-k)!k!}2^k =
+		\frac{\mcoeff[p-1](k)}{2p-1} & 0 \le k \le p-2\\
+		0 & k=-1.
+	\end{cases}
+\end{align}
+We can further calculate a few special cases
+\begin{align}
+	\label{eq: mcoeff 0}
+	\mcoeff(0)
+	&= \frac{\bcancel{p!}}{\cancel{(2p)!}}\frac{\cancel{(2p-0)!}}{\bcancel{(p-0)!}0!}2^0
+	= 1 \\
+	\label{eq: mcoeff 1}
+	\mcoeff(1)
+	&= \frac{p!}{(2p)!}\frac{(2p-1)!}{(p-1)!1!}2^1 = \frac{2p}{2p} = 1 \\
+	\mcoeff(p)
+	\label{eq: mcoeff p}
+	&= \frac{p!}{(2p)!}\frac{\cancel{(2p-p)!}}{(p-p)!\cancel{p!}}2^p
+	= \frac{1}{(2p-1)!!}
+\end{align}
+%
+Assuming \(\C(\lr) = \sqC(\lr^2)\) implies \(\sqC'(\lr^2) = \frac1{2\lr}\C'(\lr)\).
+So we have
+\begin{equation*}
+	\sqC'(\lr^2)
+	=-\frac{\sigma^2(2p+1)}{2s^2}
+	\exp\Big(-\mf(\lr)\Big)\sum_{k=0}^{p-1} \dcoeff(k)\mf(\lr)^k
+\end{equation*}
+with
+\begin{equation*}
+	\dcoeff(k) = \begin{cases}
+		\frac{\mcoeff[p-1](k)}{2p-1} & 0 \le k \le p-2\\
+		\mcoeff(p) = \frac{1}{(2p-1)!!} & k=p-1.
+	\end{cases}
+\end{equation*}
+
+\begin{lemma}
+	Assuming \(\Loss\) is a random field with Matérn covariance
+	\(\C_{p+\frac12}\), we have
+	\begin{align*}
+		\step(\hat{\lr})
+		&= \argmin_{d}
+		\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
+		\hat{\lr}
+		&= \argmax_{\lr\ge0}\left[
+			\exp\left(-\frac{\sqrt{2p+1}}{s}\lr\right)\sum_{k=0}^{p-1}
+			\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}\right)^k \lr^{k+1}
+		\right]
+	\end{align*}
+\end{lemma}
+\begin{proof}
+	Using Remark~\ref{rem: replace variogram with covariance} and
+	Theorem~\ref{thm: bayesian descent} we only need to calculate
+	\begin{align*}
+		\lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
+		&= \lr \frac{
+			\exp(-\mf(\lr))\sum_{k=0}^{p-1}\dcoeff(k)\mf(\lr)^k
+		}{\exp(0)\dcoeff(0)0^0}\\
+		\overset{\eqref{eq: mcoeff 0}}&=
+		\lr\exp\left(-\tfrac{\sqrt{2p+1}}{s}|\lr|\right)
+		\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}|\lr|\right)^k.
+	\end{align*}
+	As the equation above is negative for \(\lr \le 0\) but positive for \(\lr \ge 0\)
+	we can assume without loss of generality \(\lr\ge 0\) when maximizing.
+\end{proof}
+
 
