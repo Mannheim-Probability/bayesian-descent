@@ -5,30 +5,19 @@
 	differentiable} random field, with \textbf{rotation invariant} variogram
 	\(\variogram\) of the form \(\variogram(\step)=\phi(\|\step\|^2)\), then
 	\begin{equation*}
-		\BLUE[\Loss_\param(\step)\mid \grad\Loss(\param), \hessian\Loss(\param)]
-		= \frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
-		+ \sum_{ij}\partial_{ij}\Loss(\param)c_{ij}
-	\end{equation*}
-	with
-	\begin{equation*}
-		c_{ij} =
-			- \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_j
-			+ \frac{\delta_{ij}}{\dimension+2}\left[
-				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
-				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
-			\right].
-	\end{equation*}
-	So another way to write the BLUE is
-	\begin{equation*}
 	\begin{aligned}
-		&\underbrace{
-			\frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
-			- \frac{\phi''(\|\step\|^2)}{\phi''(0)} \frac12\langle \hessian\Loss(\param)\step, \step\rangle
-		}_{\text{Taylor-like}}\\
-		&+ \frac{\trace(\hessian \Loss(\param))}{\dimension+2}\left[
+		&\BLUE[\Loss_\param(\step)\mid \grad\Loss(\param), \hessian\Loss(\param)]\\
+		&=\begin{aligned}[t]
+			&\underbrace{
+				\frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
+				- \frac{\phi''(\|\step\|^2)}{\phi''(0)}
+				\frac12\langle \hessian\Loss(\param)\step, \step\rangle
+			}_{\text{Taylor-like}}\\
+			&+ \frac{\trace(\hessian \Loss(\param))}{\dimension+2}\left[
 				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
 				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
-		\right]
+		\right].
+		\end{aligned}
 	\end{aligned}
 	\end{equation*}
 \end{lemma}
@@ -159,6 +148,21 @@
 		-
 			\frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
 		\right].
-		\qedhere
 	\end{align*}
+	So the BLUE is of the form
+	\begin{equation*}
+		\BLUE[\Loss_\param(\step)\mid \grad\Loss(\param), \hessian\Loss(\param)]
+		= \frac{\phi'(\|\step\|^2)}{\phi'(0)}\langle \step, \grad\Loss(\param)\rangle
+		+ \sum_{ij}\partial_{ij}\Loss(\param)c_{ij}
+	\end{equation*}
+	with
+	\begin{equation*}
+		c_{ij} =
+			- \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\step_i\step_j
+			+ \frac{\delta_{ij}}{\dimension+2}\left[
+				\frac{\phi'(0) - \phi'(\|\step\|^2)}{2\phi''(0)}
+				+ \frac{\phi''(\|\step\|^2)}{2\phi''(0)}\|\diag(\step)\|^2
+			\right].
+	\end{equation*}
+	Plugging these \(c_{ij}\) into the BLUE yields the claim.
 \end{proof}
