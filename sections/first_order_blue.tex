@@ -18,7 +18,7 @@
 		\langle \step, \grad\Loss(\param)\rangle
 	\end{align*}
 \end{lemma}
-\begin{remark}
+\begin{remark}\label{rem: replace variogram with covariance}
 	If \(\Loss\) is stationary we have \(\gamma(\step) = \C(0) - \C(\step)\)
 	Therefore \(\grad\gamma = - \grad\C\) and \(\grad^2\gamma = -\grad^2\C\)
 	which means we can replace the variogram with the covariance in this case.
