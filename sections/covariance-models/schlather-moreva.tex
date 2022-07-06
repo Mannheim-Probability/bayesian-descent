@@ -19,7 +19,7 @@ Taking its derivative results in
 \begin{equation*}
 	\phi'(x) = \frac{\tfrac\beta2 (1+x)^{\tfrac\beta2 -1}}{2^{\beta/2}-1}
 \end{equation*}
-which implies that
+which implies with Theorem~\ref{thm: bayesian descent} that
 \begin{align*}
 	\hat{\lr} = \argmax_\lr \lr\frac{\phi'(\lr^2)}{\phi'(0)}
 	= \argmax_\lr \lr(1+\lr^2)^{\tfrac\beta2 -1}.
@@ -33,9 +33,78 @@ is interesting\fxwarning{explanation for \(\beta\ge 1\)?}. Taking the derivative
 	&= (1+\lr^2)^{\frac\beta2 -2} \left[(1+\lr^2) - 2\lr^2\Big(1-\frac\beta2\Big)\right]\\
 	&= (1+\lr^2)^{\frac\beta2 -2} \left[1 - \lr^2(1-\beta)\right]
 \end{align*}
-So we get
-\[
-	\hat{\lr} = \frac1{\sqrt{1-\beta}}.
-\]
 As we can see that the derivative is larger than zero before and smaller
 afterwards it is indeed a maximum.
+So we get
+\begin{theorem}[Intrinsically Stationary]
+	Assuming \(\Loss\) is centered and has variogram \(\variogram_{2,\beta}\)
+	with \(\beta\in(-\infty, 1]\), we have
+	\begin{align*}
+		\step(\hat{\lr})
+		&= \argmin_{d}
+		\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
+		\hat{\lr}
+		&= \frac1{\sqrt{1-\beta}}.
+	\end{align*}
+\end{theorem}
+
+For \(\beta<0\) the variogram is bounded. So we can define
+\[
+	\C_\beta(\lr) := c_\beta - \variogram_\beta(\lr)
+\]
+with \(c_\beta := (1-2^{\beta/2})^{-1} =
+\lim_{\lr\to\infty}\variogram_\beta(\variogram)\), and a (stationary) random
+field with this covariance function will have variogram \(\variogram_\beta\).
+
+\begin{theorem}[Stationary]
+	Assuming \(\Loss\) is centered and has covariance \(\C_\beta\) with
+	\(\beta\in(-\infty, 0)\), we have for \(\Loss(\param)\le 0\)
+	\begin{align*}
+		\step(\hat{\lr})
+		&= \argmin_{d}
+		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]\\
+		\hat{\lr}
+		&= \Root_\lr\left(
+			-1 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr
+			+(1-\beta)\lr^2 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr^3
+		\right).
+	\end{align*}
+	This root is unique.
+\end{theorem}
+
+\begin{proof}
+	By Theorem~\ref{thm: bayesian descent}	we have
+	\begin{equation*}
+		\hat{\lr}	
+		= \argmin_{\lr}\frac{\sqC(\lr^2)}{\sqC(0)} \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+		-  \lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
+	\end{equation*}
+	for \(\sqC(\lr^2) = \C_\beta(\lr) = c_\beta - \phi(\lr^2)\). Therefore need
+	to minimize
+	\begin{equation*}
+		\frac{c_\beta - \phi(\lr^2)}{c_\beta - \phi(0)}
+		\frac{\Loss(\param)}{\|\nabla\Loss(\param)\|}
+		- \lr\frac{\phi'(\lr^2)}{\phi'(0)}
+		= (1+\lr^2)^{\beta/2} 
+		\frac{\Loss(\param)}{\|\nabla\Loss(\param)\|}
+		- \lr(1+\lr^2)^{\frac\beta2-1}\\
+	\end{equation*}
+	The first order condition is hence
+	\begin{align*}
+		0\overset!=\frac{d}{d\lr}
+		&= \tfrac\beta2(1+\lr^2)^{\frac\beta2-1}2\lr 
+		\tfrac{\Loss(\param)}{\|\nabla\Loss(\param)\|}
+		- (1+\lr^2)^{\frac\beta2 -2} \left[1 - \lr^2(1-\beta)\right]\\
+		&= (1+\lr^2)^{\frac\beta2-2}\underbrace{\left[
+			\beta\lr\tfrac{\Loss(\param)}{\|\nabla\Loss(\param)\|}(1+\lr^2)
+			- [1-\lr^2(1-\beta)]
+		\right]}_{
+			= -1 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr
+			+(1-\beta)\lr^2 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr^3
+		}
+	\end{align*}
+	Since \(\Loss(\param), \beta\le0\) all coefficients of the polynomial
+	are positive except for the shift. Therefore the polynomial starts out
+	at \(-1\) in zero and only increases from there. Therefore there exists
+	a unique positive critical point which is a minimum.
+\end{proof}
