@@ -4,9 +4,9 @@ The Matérn model \(\C_\nu\) encompasses the nugget effect for \(\nu=0\),
 the exponential model for \(\nu=\tfrac12\) and the squared exponential model
 for \(\nu=\infty\). The smoothness of the model increases with increasing
 \(\nu\). While the exponential covariance model results in a random field which
-is not yet differentiable, larger \(\nu\) result in higher and higher
-differentiability. For \(\nu = p+\tfrac12\) with \(p\in\nat_0\) there exists the
-simplified formula
+is not yet differentiable, larger \(\nu\) result in increasing
+differentiability\fxnote{source}. For \(\nu = p+\tfrac12\) with \(p\in\nat_0\) there exists the
+simplified formula\fxnote{source}
 \begin{align}
 	\C_{p+\tfrac12}(\|\step\|)
 	&= \sigma^2 \exp\left(- \tfrac{\sqrt{2p+1} \|\step\|}{s}\right)\tfrac{p!}{(2p)!}
@@ -123,8 +123,8 @@ with
 			= \frac{s}{2}\Big(1+\frac{1}{\sqrt{5}}\Big)
 		\end{equation*}
 	\end{itemize}
-
 \end{theorem}
+
 \begin{proof}
 	Using Remark~\ref{rem: replace variogram with covariance} and
 	Theorem~\ref{thm: bayesian descent} we only need the maximum of
@@ -199,3 +199,31 @@ with
 	\end{equation*}
 \end{proof}
 
+\begin{theorem}
+	Assuming \(\Loss\) is a random field with Matérn covariance
+	\(\C_{p+\frac12}\), we have
+	\begin{align*}
+		\step(\hat{\lr})
+		&= \argmin_{d}
+		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]\\
+		\hat{\lr}
+		&=
+	\end{align*}
+	So we have for
+	\begin{itemize}
+		\item \(p=1\)
+		\begin{equation*}
+			\hat{\lr}
+			=
+		\end{equation*}
+
+		\item \(p=2\)
+		\begin{equation*}
+			\hat{\lr}
+			=
+		\end{equation*}
+	\end{itemize}
+\end{theorem}
+\begin{proof}
+	
+\end{proof}
