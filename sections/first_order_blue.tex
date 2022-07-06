@@ -69,7 +69,8 @@ A particularly charming thing about stationarity is, that
 on both \(\Loss(\param)\) and \(\grad\Loss(\param)\).
 
 \begin{lemma}\label{lem: blue centered, stationary}
-	If \(\Loss\) is a \textbf{stationary, centered, differentiable} random field, then
+	If \(\Loss\) is a \textbf{stationary, centered, differentiable} random field
+	with covariance function \(\C\), then
 	\begin{align*}
 		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \grad\Loss(\param)]
 		&= \frac{\C(\step)}{\C(0)} \Loss(\param)
