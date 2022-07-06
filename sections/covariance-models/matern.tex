@@ -67,14 +67,19 @@ We can further calculate a few special cases
 	\label{eq: mcoeff 0}
 	\mcoeff(0)
 	&= \frac{\bcancel{p!}}{\cancel{(2p)!}}\frac{\cancel{(2p-0)!}}{\bcancel{(p-0)!}0!}2^0
-	= 1 \\
+	= 1
+	\qquad
+	&& p\ge 0\\
 	\label{eq: mcoeff 1}
 	\mcoeff(1)
-	&= \frac{p!}{(2p)!}\frac{(2p-1)!}{(p-1)!1!}2^1 = \frac{2p}{2p} = 1 \\
+	&= \frac{p!}{(2p)!}\frac{(2p-1)!}{(p-1)!1!}2^1 = \frac{2p}{2p} = 1 
+	\qquad
+	&& p\ge 1\\
 	\mcoeff(p)
 	\label{eq: mcoeff p}
 	&= \frac{p!}{(2p)!}\frac{\cancel{(2p-p)!}}{(p-p)!\cancel{p!}}2^p
 	= \frac{1}{(2p-1)!!}
+	&& p \ge 1
 \end{align}
 %
 Assuming \(\C(\lr) = \sqC(\lr^2)\) implies \(\sqC'(\lr^2) = \frac1{2\lr}\C'(\lr)\).
@@ -92,7 +97,7 @@ with
 	\end{cases}
 \end{equation*}
 
-\begin{lemma}
+\begin{theorem}
 	Assuming \(\Loss\) is a random field with Matérn covariance
 	\(\C_{p+\frac12}\), we have
 	\begin{align*}
@@ -101,14 +106,28 @@ with
 		\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
 		\hat{\lr}
 		&= \argmax_{\lr\ge0}\left[
-			\exp\left(-\frac{\sqrt{2p+1}}{s}\lr\right)\sum_{k=0}^{p-1}
-			\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}\right)^k \lr^{k+1}
+			\exp\left(-\tfrac{\sqrt{2p+1}}{s}\lr\right)
+			\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}\right)^k \lr^{k+1}
 		\right]
 	\end{align*}
-\end{lemma}
+	So we have for
+	\begin{itemize}
+		\item \(p=1\)
+		\begin{equation*}
+			\hat{\lr} = \frac{s}{\sqrt{3}}
+		\end{equation*}
+
+		\item \(p=2\)
+		\begin{equation*}
+			\hat{\lr}
+			= \frac{s}{2}\Big(1+\frac{1}{\sqrt{5}}\Big)
+		\end{equation*}
+	\end{itemize}
+
+\end{theorem}
 \begin{proof}
 	Using Remark~\ref{rem: replace variogram with covariance} and
-	Theorem~\ref{thm: bayesian descent} we only need to calculate
+	Theorem~\ref{thm: bayesian descent} we only need the maximum of
 	\begin{align*}
 		\lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
 		&= \lr \frac{
@@ -119,7 +138,64 @@ with
 		\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}|\lr|\right)^k.
 	\end{align*}
 	As the equation above is negative for \(\lr \le 0\) but positive for \(\lr \ge 0\)
-	we can assume without loss of generality \(\lr\ge 0\) when maximizing.
-\end{proof}
+	as \(\dcoeff(k)\ge 0\), we can assume without loss of generality \(\lr\ge 0\)
+	when maximizing. Additionally the term is zero for \(\lr=0\) positive for
+	\(\lr\ge0\) and tends towards zero for \(\lr\to\infty\). Therefore there
+	exists at least one maximum.
 
+	Taking the derivative for \(\lr\ge 0\) results in
+	\begin{equation*}
+		\exp\left(-\tfrac{\sqrt{2p+1}}{s}\lr\right)\left[
+			-\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^{k+1}
+			+\sum_{k=0}^{p-1}\dcoeff(k)(k+1)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k 
+		\right]
+	\end{equation*}
+	So for the first order condition we require
+	\begin{align*}
+		0 &= \dcoeff(0) + \sum_{k=1}^{p-1}
+		[(k+1)\dcoeff(k) - \dcoeff(k-1)]\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k
+		- \dcoeff(p-1)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^p.
+	\end{align*}
+	Let us have a look at the coefficients. Multiplying the entire formula with
+	\(2p-1\) results in 
+	\begin{align*}
+		(2p-1)\dcoeff(0)
+		&= \mcoeff[p-1](0)\\
+		\overset{\eqref{eq: mcoeff 0}}&=1\\
+		(2p-1)\dcoeff(p-1)
+		&= \frac{(2p-1)}{(2p-1)!!}\\
+		(2p-1)[(k+1)\dcoeff(k) - \dcoeff(k-1)]
+		&= [(k+1)\mcoeff[p-1](k) - \mcoeff[p-1](k-1)]
+	\end{align*}
+	So we need
+	\begin{equation*}
+		0 = 1 - \tfrac{2p-1}{(2p-1)!!}\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^p
+		+ \sum_{k=1}^{p-1}
+		[(k+1)\mcoeff[p-1](k) - \mcoeff[p-1](k-1)]\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k.
+	\end{equation*}
+	Now let us consider \(p=1\). Here we have
+	\begin{equation*}
+		0 = 1 - \tfrac{\sqrt{3}}{s}\lr
+	\end{equation*}
+	and therefore \(\hat{\lr}=\frac{s}{\sqrt{3}}\).
+	For \(p=2\) we have
+	\begin{equation*}
+		0 = 1 - \tfrac{5}{s^2}\lr^2
+		+ \underbrace{[2\mcoeff[1](1) - \mcoeff[1](0)]}_{
+			=1\quad \mathrlap{\eqref{eq: mcoeff 0}, \eqref{eq: mcoeff 1}}
+		}\tfrac{\sqrt{5}}{s}\lr
+	\end{equation*}
+	So we want to solve
+	\begin{equation*}
+		0 = \lr^2 - \tfrac{s}{\sqrt{5}}\lr - \tfrac{s^2}{5}.
+	\end{equation*}
+	\(\lr\ge0\) implies only one solution remains
+	\begin{equation*}
+		\hat{\lr}
+		= \frac{s}{2\sqrt{5}} + \frac{\sqrt{\left(\frac{s}{\sqrt{5}}\right)^2 + 4\frac{s^2}{5}}}{2}
+		= \frac{s}{2\sqrt{5}} + \frac{s}{2}
+		= \frac{s}{2}\Big(1+\frac{1}{\sqrt{5}}\Big).
+		\qedhere
+	\end{equation*}
+\end{proof}
 
