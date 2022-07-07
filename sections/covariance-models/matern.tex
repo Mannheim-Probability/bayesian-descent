@@ -107,7 +107,7 @@ with
 		\hat{\lr}
 		&= \argmax_{\lr\ge0}\left[
 			\exp\left(-\tfrac{\sqrt{2p+1}}{s}\lr\right)
-			\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}\right)^k \lr^{k+1}
+			\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}\right)^k \lr^{k+1}
 		\right]
 	\end{align*}
 	So we have for
@@ -120,7 +120,7 @@ with
 		\item \(p=2\)
 		\begin{equation*}
 			\hat{\lr}
-			= \frac{s}{2}\Big(1+\frac{1}{\sqrt{5}}\Big)
+			= \frac{s}{\sqrt{5}}\frac{1+\sqrt{5}}2
 		\end{equation*}
 	\end{itemize}
 \end{theorem}
@@ -135,7 +135,7 @@ with
 		}{\exp(0)\dcoeff(0)0^0}\\
 		\overset{\eqref{eq: mcoeff 0}}&=
 		\lr\exp\left(-\tfrac{\sqrt{2p+1}}{s}|\lr|\right)
-		\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}|\lr|\right)^k.
+		\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}|\lr|\right)^k.
 	\end{align*}
 	As the equation above is negative for \(\lr \le 0\) but positive for \(\lr \ge 0\)
 	as \(\dcoeff(k)\ge 0\), we can assume without loss of generality \(\lr\ge 0\)
@@ -144,86 +144,200 @@ with
 	exists at least one maximum.
 
 	Taking the derivative for \(\lr\ge 0\) results in
-	\begin{equation*}
+	\begin{equation}\label{eq: derivative of matern grad cov}
 		\exp\left(-\tfrac{\sqrt{2p+1}}{s}\lr\right)\left[
-			-\sum_{k=0}^{p-1}\dcoeff(k)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^{k+1}
-			+\sum_{k=0}^{p-1}\dcoeff(k)(k+1)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k 
+			-\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^{k+1}
+			+\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}(k+1)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k 
 		\right]
-	\end{equation*}
+	\end{equation}
 	So for the first order condition we require
 	\begin{align*}
-		0 &= \dcoeff(0) + \sum_{k=1}^{p-1}
-		[(k+1)\dcoeff(k) - \dcoeff(k-1)]\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k
-		- \dcoeff(p-1)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^p.
+		0 &= 1 + \sum_{k=1}^{p-1}
+		\left[(k+1)\tfrac{\dcoeff(k)}{\dcoeff(0)} - \tfrac{\dcoeff(k-1)}{\dcoeff(0)}\right]
+		\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k
+		- \tfrac{\dcoeff(p-1)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^p.
 	\end{align*}
-	Let us have a look at the coefficients. Multiplying the entire formula with
-	\(2p-1\) results in 
+	Let us have a look at the coefficients 
 	\begin{align*}
-		(2p-1)\dcoeff(0)
-		&= \mcoeff[p-1](0)\\
-		\overset{\eqref{eq: mcoeff 0}}&=1\\
-		(2p-1)\dcoeff(p-1)
-		&= \frac{(2p-1)}{(2p-1)!!}\\
-		(2p-1)[(k+1)\dcoeff(k) - \dcoeff(k-1)]
-		&= [(k+1)\mcoeff[p-1](k) - \mcoeff[p-1](k-1)]
+		\dcoeff(0)
+		&= \frac{\mcoeff[p-1](0)}{2p-1}
+		\overset{\eqref{eq: mcoeff 0}}=\frac{1}{2p-1}\\
+		\dcoeff(p-1)
+		&= \mcoeff(p) \overset{\eqref{eq: mcoeff p}}= \frac{1}{(2p-1)!!}\\
+		\frac{\dcoeff(k)}{\dcoeff(0)} 
+		&= \mcoeff[p-1](k) & 0\le k \le p-2
 	\end{align*}
-	So we need
-	\begin{equation*}
-		0 = 1 - \tfrac{2p-1}{(2p-1)!!}\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^p
-		+ \sum_{k=1}^{p-1}
-		[(k+1)\mcoeff[p-1](k) - \mcoeff[p-1](k-1)]\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k.
-	\end{equation*}
 	Now let us consider \(p=1\). Here we have
 	\begin{equation*}
 		0 = 1 - \tfrac{\sqrt{3}}{s}\lr
 	\end{equation*}
 	and therefore \(\hat{\lr}=\frac{s}{\sqrt{3}}\).
+
 	For \(p=2\) we have
 	\begin{equation*}
-		0 = 1 - \tfrac{5}{s^2}\lr^2
-		+ \underbrace{[2\mcoeff[1](1) - \mcoeff[1](0)]}_{
+		0 = 1 - \left(\tfrac{\sqrt{5}}{s}\lr\right)^2
+		+ \underbrace{\biggl[2\frac{\dcoeff[2](p-1)}{\dcoeff[2](0)} - \mcoeff[1](0)\biggr]}_{
+			= 2\frac{2\cdot 2-1}{(2\cdot 2 -1)!!} - 1
 			=1\quad \mathrlap{\eqref{eq: mcoeff 0}, \eqref{eq: mcoeff 1}}
 		}\tfrac{\sqrt{5}}{s}\lr
 	\end{equation*}
-	So we want to solve
+	So we want to find \(\tfrac{\sqrt{5}}{s}\lr\) which solves
 	\begin{equation*}
-		0 = \lr^2 - \tfrac{s}{\sqrt{5}}\lr - \tfrac{s^2}{5}.
+		0 = x^2 - x - 1.
 	\end{equation*}
 	\(\lr\ge0\) implies only one solution remains
 	\begin{equation*}
-		\hat{\lr}
-		= \frac{s}{2\sqrt{5}} + \frac{\sqrt{\left(\frac{s}{\sqrt{5}}\right)^2 + 4\frac{s^2}{5}}}{2}
-		= \frac{s}{2\sqrt{5}} + \frac{s}{2}
-		= \frac{s}{2}\Big(1+\frac{1}{\sqrt{5}}\Big).
+		\frac{\sqrt{5}}{s}\hat{\lr}
+		= \left(\frac12 + \frac{\sqrt{1 + 4}}{2}\right)
+		= \frac{1+\sqrt{5}}2.
 		\qedhere
 	\end{equation*}
 \end{proof}
 
 \begin{theorem}
 	Assuming \(\Loss\) is a random field with Matérn covariance
-	\(\C_{p+\frac12}\), we have
-	\begin{align*}
+	\(\C_{p+\frac12}\), we have for \(\Loss(\param)\le 0\)
+	\begin{equation*}
 		\step(\hat{\lr})
-		&= \argmin_{d}
-		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]\\
-		\hat{\lr}
-		&=
-	\end{align*}
-	So we have for
+		= \argmin_{d}
+		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]
+	\end{equation*}
+	with
 	\begin{itemize}
 		\item \(p=1\)
 		\begin{equation*}
 			\hat{\lr}
-			=
+			= \frac{s}{\sqrt{3}}\frac{1}{\left(
+				1- \frac{\sqrt{3}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+			\right)}
 		\end{equation*}
 
 		\item \(p=2\)
 		\begin{equation*}
 			\hat{\lr}
-			=
+			= \frac{s}{2\sqrt5} \left(
+				1 + \sqrt{1+\frac4{1-\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}}}
+			\right)
 		\end{equation*}
 	\end{itemize}
 \end{theorem}
 \begin{proof}
-	
+	By Theorem~\ref{thm: bayesian descent}	we have
+	\begin{equation*}
+		\hat{\lr}	
+		= \argmin_{\lr}\frac{\sqC(\lr^2)}{\sqC(0)} \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+		-  \lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
+	\end{equation*}
+	with
+	\begin{align*}
+		\frac{\sqC(\lr^2)}{\sqC(0)}
+		&= \frac{\C_{p+\frac12}(\lr)}{\C_{p+\frac12}(0)}
+		= \frac{\sigma^2\exp(-\mf(\lr))\sum_{k=0}^p \mcoeff(k)\mf(\lr)^k}{\sigma^2\exp(-0)\sum_{k=0}^p \mcoeff(k)0^k}
+		\\
+		&= \exp(-\mf(\lr))\sum_{k=0}^p \mcoeff(k)\mf(\lr)^k.
+	\end{align*}
+	Taking the derivative of this first term, we get
+	\begin{align*}
+		&\frac{d}{d\lr}\frac{\sqC(\lr^2)}{\sqC(0)}\\
+		&= \exp(-\mf(\lr))\mf'(\lr)\left[
+			- \sum_{k=0}^p \mcoeff(k)\mf(\lr)^k + \sum_{k=1}^p \mcoeff(k)k\mf(\lr)^{k-1}
+		\right]\\
+		&= -\exp(-\mf(\lr))\mf'(\lr)\biggl[
+			\mcoeff(p)\mf(\lr)^p + \underbrace{\sum_{k=0}^{p-1} [\mcoeff(k)-(k+1)\mcoeff(k+1)]\mf(\lr)^k}_{\overset{\eqref{eq: mcoeff 0},\eqref{eq: mcoeff 1}}=\sum_{k=1}^{p-1} [\mcoeff(k)-(k+1)\mcoeff(k+1)]\mf(\lr)^k}
+		\biggr].
+	\end{align*}
+	Recall that in \eqref{eq: derivative of matern grad cov} we have already
+	calculated the derivative of the second therm (the gradient covariance), i.e.
+	\begin{align*}
+		&\frac{d}{d\lr}\lr\frac{\sqC'(\lr^2)}{\sqC'(0)}\\
+		&=\exp\left(-\mf(\lr)\right)\left[
+			-\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\mf(\lr)^{k+1}
+			+\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}(k+1)\mf(\lr)^k 
+		\right]\\
+		&=\exp\left(-\mf(\lr)\right)
+		\biggl[
+			1 + \sum_{k=1}^{p-1}
+			\left[(k+1)\tfrac{\dcoeff(k)}{\dcoeff(0)} - \tfrac{\dcoeff(k-1)}{\dcoeff(0)}\right]
+			\mf(\lr)^k
+			- \underbrace{\tfrac{\dcoeff(p-1)}{\dcoeff(0)}}_{=(2p-1)\mathrlap{\mcoeff(p)}}\mf(\lr)^p
+		\biggr].
+	\end{align*}
+	Defining
+	\begin{equation*}
+		\Delta_\Loss = -\mf'(\lr) \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+	\end{equation*}
+	and multiplying the first order condition by \(\exp(\mf(\lr))\) we get
+	\begin{align*}
+		0\overset!&=
+		\exp(\mf(\lr))\frac{d}{d\lr}\left[
+			\frac{\sqC(\lr^2)}{\sqC(0)}\frac{\Loss(\param)}{\|\nabla\Loss(\param)\|}
+			- \lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
+		\right]\\
+		&=\begin{aligned}[t]
+			&-1 + \left(\Delta_\Loss + (2p-1)\right)\mcoeff(p)\mf(\lr)^p
+			\\
+			&+ \sum_{k=1}^{p-1}
+				\biggl(\Delta_\Loss
+				[\mcoeff(k)-(k+1)\mcoeff(k+1)]
+				-\left[(k+1)\tfrac{\dcoeff(k)}{\dcoeff(0)}-\tfrac{\dcoeff(k-1)}{\dcoeff(0)}\right]
+				\biggr)
+				\mf(\lr)^k
+		\end{aligned}
+	\end{align*}
+	So for \(p=1\) we have
+	\begin{align*}
+		0\overset!&=
+		-1 + \left(\Delta_\Loss + (2\cdot 1-1)\right)\mcoeff(p)\mf(\lr)^p\\
+		&= -1 + \left(1- \frac{\sqrt{3}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\right)
+		\frac{\sqrt{3}}{s}\lr,
+	\end{align*}
+	which implies	
+	\[
+		\hat{\lr}
+		= \frac{1}{\frac{\sqrt{3}}{s}\left(
+			1- \frac{\sqrt{3}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+		\right)}.
+	\]
+	For \(p=2\) we have
+	\begin{align*}
+		0\overset!&=
+		\begin{aligned}[t]
+			&-1
+			+ \left(3-\frac{\sqrt{5}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\right)
+			\frac{1}{3!!}\frac{5}{s^2}\lr^2\\
+			&+ \left(
+				-\frac{\sqrt{5}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+				[\mcoeff[2](1) - 2\mcoeff[2](2)] -
+				\bigl[2\tfrac{\mcoeff[2](2)}{\dcoeff[2](0)} - \mcoeff[1](0)\bigr]
+			\right)\frac{\sqrt{5}}s \lr
+		\end{aligned}\\
+		&=
+		\begin{aligned}[t]
+			&-1
+			+ \left(1-\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\right)
+			\frac{5}{s^2}\lr^2\\
+			&+ \underbrace{\left(
+				-\frac{\sqrt{5}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+				\bigl[1 - \tfrac2{(4-1)!!}\bigr] -
+				\bigl[2\tfrac{(4-1)}{(4-1)!!} - 1\bigr]
+			\right)}_{
+				= -\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|} - 1
+			}\frac{\sqrt{5}}s \lr
+		\end{aligned}\\
+		&= -1
+		- \left(1-\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\right)
+		\frac{\sqrt{5}}s \lr
+		+ \left(1-\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\right)
+		\left(\frac{\sqrt{5}}{s}\lr\right)^2
+	\end{align*}
+	\(\frac{\sqrt{5}}{s}\hat{\lr}\) is therefore the positive solution of
+	\begin{equation*}
+		0= ax^2 - ax - 1
+	\end{equation*}
+	with \(a= \left(1-\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\right)\).
+	In other words we have
+	\begin{equation*}
+		\frac{\sqrt{5}}{s}\hat{\lr} = \frac{1+\sqrt{1+4/a}}{2}.
+	\end{equation*}
+	Plugging \(a\) back in results in the claim.
 \end{proof}
