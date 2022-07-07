@@ -57,8 +57,8 @@ with \(c_\beta := (1-2^{\beta/2})^{-1} =
 field with this covariance function will have variogram \(\variogram_\beta\).
 
 \begin{theorem}[Stationary]
-	Assuming \(\Loss\) is centered and has covariance \(\C_\beta\) with
-	\(\beta\in(-\infty, 0)\), we have for \(\Loss(\param)\le 0\)
+	Assuming \(\Loss\) is centered, has covariance \(\C_\beta\) with
+	\(\beta\in(-\infty, 0)\), and we have for \(\Loss(\param)\le 0\)
 	\begin{align*}
 		\step(\hat{\lr})
 		&= \argmin_{d}
@@ -69,7 +69,13 @@ field with this covariance function will have variogram \(\variogram_\beta\).
 			+(1-\beta)\lr^2 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr^3
 		\right).
 	\end{align*}
-	This root is unique.
+	The unique root can be found either by solving the polynomial of third degree
+	(e.g. using Cardano's method) or by bisection as the root is in \([0,
+	1/\sqrt{1-\beta}]\) and the function is monotonously increasing.
+	\fxnote{
+		case \(\Loss(\theta)>0\): from plotting it looks like the first
+		critical point is still a maximum
+	}
 \end{theorem}
 
 \begin{proof}
