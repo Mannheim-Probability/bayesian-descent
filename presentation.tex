@@ -1,0 +1,52 @@
+\documentclass[
+	% handout,
+	hyperref={unicode, colorlinks=true, linkcolor=.}
+]{beamer}
+\usetheme{rochester}
+
+\input{packages.tex}
+
+%%% EDITING (Annotations, TODO, etc.) 
+\usepackage[draft]{fixme} %final removes annotations %draft includes annotations
+\fxsetup{theme=color}
+%%\fxnote{some note} ,\fxwarning{}, \fxerror{}, \fxfatal{} <- does not allow [final] to compile
+
+%%% BIBLIOGRAPHY
+\usepackage[style=alphabetic, backend=biber, seconds=true, date=iso, urldate=iso, maxcitenames=2]{biblatex}
+\addbibresource{references.bib}
+
+\input{macros.tex}
+
+
+\title{Using Statistics to Determine the Learning Rate for Gradient Descent}
+\author{Felix Benning}
+\institute{University of Mannheim}
+
+\begin{document}
+	\frame{\titlepage}
+
+	\begin{frame}{Outline}
+		\tableofcontents
+	\end{frame}
+
+	\AtBeginSection[]
+	{
+	\begin{frame}{Outline}
+		\tableofcontents[currentsection]
+	\end{frame}
+	}
+
+	\section{Motivation}
+
+	\input{frames/optimization_by_approximation.tex}
+	\input{frames/newton-raphson.tex}
+	\input{frames/gradeint_descent.tex}
+
+	\section{BLUE}
+
+	\section{Covariance Models}
+
+
+
+\printbibliography[heading=bibintoc]	
+\end{document}

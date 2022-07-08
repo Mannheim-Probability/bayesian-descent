@@ -1,0 +1,14 @@
+\begin{frame}{Optimization by Approximation}
+
+	Goal: Optimize Loss \(\Loss\)
+
+	\begin{algorithm*}[H]
+		\caption{Optimization by Approximation}
+		\KwIn{starting point \(\param\)}
+		\While{not converged}{
+			\(\hat{\Loss} \leftarrow\) Approximation of \(\Loss\) around \(\param\)
+
+			\(\param \leftarrow \argmin_{\param} \hat{\Loss}(\param)\)
+		}
+	\end{algorithm*}
+\end{frame}

@@ -1,0 +1,18 @@
+
+\begin{frame}{Newton-Raphson}
+	Second order Taylor
+	\begin{align*}
+		\hat{\Loss}_{N}(\param + \step)
+		&:= T^2_\param \Loss(\param + \step)\\
+		&= \Loss(\param)
+		+ \langle \grad\Loss(\param), \step\rangle
+		+ \tfrac12 \langle \grad^2\Loss(\param) \step, \step\rangle
+	\end{align*}
+\only<2->{
+	leads to \textbf{Newton-Raphson}
+	\begin{equation*}
+		\step^*_{N} := -[\grad^2\Loss(\param)]^{-1}\grad\Loss(\param)
+		= \argmin_\step \hat{\Loss}_{N}(\param + \step).
+	\end{equation*}
+}
+\end{frame}
