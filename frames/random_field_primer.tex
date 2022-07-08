@@ -1,0 +1,22 @@
+\begin{frame}{Random Fields}
+	\begin{definition}[Random Field]
+		A family of random variables \((Z(x))_{x\in\real^\dimension}\) is a
+		\emph{random field} over \(\real^\dimension\).
+	\end{definition}
+	\begin{definition}[Covariance Function]\label{def: covariance function}
+		The covariance function \(\C\) of a random field \(Z\) is defined as
+		\[
+			\C(x,y) = \Cov(Z(x),Z(y))	
+		\]
+		\vspace*{-0.5cm}	
+		\begin{enumerate}
+			\item \(Z\) is \emph{stationary} if \(\C(x,y) = \C(x-y)\).
+			\item \(Z\) is \emph{intrinsically stationary} if its increments
+			\(Z_\step(x) = Z(x+\step) - Z(x)\) are stationary. Then the
+			\emph{variogram} is defined as
+			\begin{equation*}\label{def: variogram}
+				\variogram(\step) := \tfrac12\Var(Z_\step(x)) = \tfrac12\Var(Z_\step(0))
+			\end{equation*}
+		\end{enumerate}
+	\end{definition}
+\end{frame}
