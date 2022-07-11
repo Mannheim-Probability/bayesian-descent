@@ -1,0 +1,12 @@
+
+\begin{lemma}\label{lem: blue is cond. expectation}
+	If \(X,Y_1,\dots, Y_n\) are multivariate normal distributed, then we
+	have
+	\begin{align*}
+		\BLUE[Y\mid X_1,\dots,X_n]
+		&= \E[Y\mid X_1,\dots, X_n]\\
+		\bigg(&=
+		\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n) : f\text{ meas.}\}} \E[\|Y-\hat{Y}\|^2]
+		\bigg).
+	\end{align*}
+\end{lemma}

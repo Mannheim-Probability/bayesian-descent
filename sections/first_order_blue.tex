@@ -68,22 +68,7 @@ A particularly charming thing about stationarity is, that
 (cf. Remark~\ref{rem: covariance uncorrelated}). So we can easily ``condition''
 on both \(\Loss(\param)\) and \(\grad\Loss(\param)\).
 
-\begin{lemma}\label{lem: blue centered, stationary}
-	If \(\Loss\) is a \textbf{stationary, centered, differentiable} random field
-	with covariance function \(\C\), then
-	\begin{align*}
-		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \grad\Loss(\param)]
-		&= \frac{\C(\step)}{\C(0)} \Loss(\param)
-		+ \grad\C(\step)^T [\grad^2\C(0)]^{-1} \grad\Loss(\param)
-	\\
-	\intertext{
-		if additionally \(\Loss\) is \textbf{isotropic}, i.e.
-		\(\C(\step)=\sqC(\|\step\|^2)\), this reduces to
-	}
-		&= \frac{\sqC(\|\step\|^2)}{\sqC(0)} \Loss(\param)
-		+ \frac{\sqC'(\|\step\|^2)}{\sqC'(0)} \langle \step, \grad\Loss(\param)\rangle.
-	\end{align*}
-\end{lemma}
+\input{theorems/stationary_blue.tex}
 \begin{remark}
 	One could also use the gradient of the loss exclusively
 	\begin{align*}

@@ -5,35 +5,26 @@ let us see what we gain from that. Bayesian optimization provides us with
 an excellent but also very expensive answer to that question. We now want to
 find a cheap approximation of \(\Loss\) again and optimize that instead.
 
-Let us first recapitulate what a BLUE is. A linear estimator \(\hat{Y}\) of
-\(Y\) using \(X_1,\dots,X_n\) is an element of the linear hull shifted by a
-constant 
+Let us first recapitulate what a BLUE is. A \textbf{linear estimator}
+\(\hat{Y}\) of \(Y\) using \(X_1,\dots,X_n\) is of the form 
 \begin{equation*}
 	\hat{Y}\in \linHull\{X_1,\dots,X_n\} + \real.
 \end{equation*}
-An unbiased linear estimator is from the set
+The set of \textbf{unbiased linear estimators} is defined as
 \begin{align}\label{def: LUE}
 	\LUE
 	&= \{ \hat{Y} \in \linHull\{X_1,\dots,X_n\} + \real : \E[\hat{Y}] = \E[Y]\}\\
 	\nonumber
 	&= \{ \hat{Y} - \E[\hat{Y}] + \E[Y] : \hat{Y} \in \linHull\{X_1,\dots,X_n\}\}.
 \end{align}
-And the BLUE is the best linear unbiased estimator from that set
+And the BLUE is the \textbf{best linear unbiased estimator}, i.e.
 \begin{equation}\label{def: BLUE}
 	\BLUE[Y\mid X_1,\dots, X_n] := \argmin_{\hat{Y}\in\LUE} \E[\|\hat{Y} - Y\|^2].
 \end{equation}
 Other risk functions to minimize are possible, but this is the usual one.
-\begin{lemma}\label{lem: blue is cond. expectation}
-	If \(X,Y_1,\dots, Y_n\) are multivariate normal distributed, then we
-	have\fxwarning{double-check this statement, source?, appendix?}
-	\begin{align*}
-		\BLUE[Y\mid X_1,\dots,X_n]
-		&= \E[Y\mid X_1,\dots, X_n]\\
-		\bigg(&=
-		\argmin_{\hat{Y}\in\{f(X_1,\dots, X_n) : f\text{ meas.}\}} \E[\|Y-\hat{Y}\|^2]
-		\bigg).
-	\end{align*}
-\end{lemma}
+
+\input{theorems/blue_is_cond_expec.tex}
+\fxwarning{double-check this statement, source?, appendix?}
 \begin{remark}
 	As Bayesian Optimization typically assumes Gaussian random fields, working with
 	the BLUE is really equivalent to working with the conditional expectation in

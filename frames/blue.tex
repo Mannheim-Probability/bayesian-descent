@@ -1,0 +1,24 @@
+\begin{frame}{BLUE}
+\only<1-2>{
+	A \textbf{linear estimator}
+	\(\hat{Y}\) of \(Y\) using \(X_1,\dots,X_n\) is of the form 
+	\begin{equation*}
+		\hat{Y}\in \linHull\{X_1,\dots,X_n\} + \real.
+	\end{equation*}
+}\only<2-3>{
+	The set of \textbf{unbiased linear estimators} is defined as
+	\begin{align*}\label{def: LUE}
+		\LUE
+		&= \{ \hat{Y} \in \linHull\{X_1,\dots,X_n\} + \real : \E[\hat{Y}] = \E[Y]\}\\
+		\nonumber
+		&= \{ \hat{Y} - \E[\hat{Y}] + \E[Y] : \hat{Y} \in \linHull\{X_1,\dots,X_n\}\}.
+	\end{align*}
+}\only<3->{
+	And the BLUE is the \textbf{best linear unbiased estimator}, i.e.
+	\begin{equation*}\label{def: BLUE}
+		\BLUE[Y\mid X_1,\dots, X_n] := \argmin_{\hat{Y}\in\LUE} \E[\|\hat{Y} - Y\|^2].
+	\end{equation*}
+}\only<4->{
+	\input{theorems/blue_is_cond_expec.tex}	
+}
+\end{frame}

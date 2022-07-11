@@ -1,5 +1,5 @@
 \documentclass[
-	% handout,
+	handout,
 	hyperref={unicode, colorlinks=true, linkcolor=.}
 ]{beamer}
 % \usetheme{rochester}
@@ -43,11 +43,18 @@
 	\input{frames/motivation/gradeint_descent.tex}
 	\input{frames/motivation/determining_learning_rate.tex}
 
-	\section{Loss as a Random Field}
+	\section{Preliminaries}
 
-	\input{frames/loss_as_random_field/random_field_primer.tex}
-	\input{frames/loss_as_random_field/random_field_derivative.tex}
-	\input{frames/loss_as_random_field/loss_as_random_field.tex}
+	\subsection{Random Field}
+	\input{frames/random_fields/definitions.tex}
+	\input{frames/random_fields/derivative.tex}
+
+	\subsection{BLUE}
+	\input{frames/blue.tex}
+
+	\section{Main Results}
+
+	\input{frames/main_results/blue_of_loss_stationary.tex}
 
 	\section{Covariance Models}
 
