@@ -1,0 +1,18 @@
+
+\begin{theorem}[Stationary]
+	Assuming \(\Loss\) is centered, has covariance \(\C_\beta\) with
+	\(\beta\in(-\infty, 0)\), and we have for \(\Loss(\param)\le 0\)
+	\begin{align*}
+		\step(\hat{\lr})
+		&= \argmin_{d}
+		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]\\
+		\hat{\lr}
+		&= \Root_\lr\left(
+			-1 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr
+			+(1-\beta)\lr^2 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr^3
+		\right).
+	\end{align*}
+	The unique root can be found either by solving the polynomial of third degree
+	(e.g. using Cardano's method) or by bisection as the root is in \([0,
+	1/\sqrt{1-\beta}]\) and the function is monotonously increasing.
+\end{theorem}

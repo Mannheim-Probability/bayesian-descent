@@ -36,17 +36,7 @@ is interesting\fxwarning{explanation for \(\beta\ge 1\)?}. Taking the derivative
 As we can see that the derivative is larger than zero before and smaller
 afterwards it is indeed a maximum.
 So we get
-\begin{theorem}[Intrinsically Stationary]
-	Assuming \(\Loss\) is centered and has variogram \(\variogram_{2,\beta}\)
-	with \(\beta\in(-\infty, 1]\), we have
-	\begin{align*}
-		\step(\hat{\lr})
-		&= \argmin_{d}
-		\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
-		\hat{\lr}
-		&= \frac1{\sqrt{1-\beta}}.
-	\end{align*}
-\end{theorem}
+\input{theorems/covariance_models/schlather-moreva_intrinsically_stationary.tex}
 
 For \(\beta<0\) the variogram is bounded. So we can define
 \[
@@ -56,27 +46,11 @@ with \(c_\beta := (1-2^{\beta/2})^{-1} =
 \lim_{\lr\to\infty}\variogram_\beta(\variogram)\), and a (stationary) random
 field with this covariance function will have variogram \(\variogram_\beta\).
 
-\begin{theorem}[Stationary]
-	Assuming \(\Loss\) is centered, has covariance \(\C_\beta\) with
-	\(\beta\in(-\infty, 0)\), and we have for \(\Loss(\param)\le 0\)
-	\begin{align*}
-		\step(\hat{\lr})
-		&= \argmin_{d}
-		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]\\
-		\hat{\lr}
-		&= \Root_\lr\left(
-			-1 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr
-			+(1-\beta)\lr^2 + \frac{\beta\Loss(\param)}{\|\grad\Loss(\param)\|}\lr^3
-		\right).
-	\end{align*}
-	The unique root can be found either by solving the polynomial of third degree
-	(e.g. using Cardano's method) or by bisection as the root is in \([0,
-	1/\sqrt{1-\beta}]\) and the function is monotonously increasing.
+\input{theorems/covariance_models/schlather-moreva_stationary.tex}
 	\fxnote{
 		case \(\Loss(\theta)>0\): from plotting it looks like the first
 		critical point is still a maximum
 	}
-\end{theorem}
 
 \begin{proof}
 	By Theorem~\ref{thm: bayesian descent}	we have

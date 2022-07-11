@@ -1,0 +1,12 @@
+
+\begin{theorem}[Intrinsically Stationary]
+	Assuming \(\Loss\) is centered and has variogram \(\variogram_{2,\beta}\)
+	with \(\beta\in(-\infty, 1]\), we have
+	\begin{align*}
+		\step(\hat{\lr})
+		&= \argmin_{d}
+		\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
+		\hat{\lr}
+		&= \frac1{\sqrt{1-\beta}}.
+	\end{align*}
+\end{theorem}
