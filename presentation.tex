@@ -1,8 +1,8 @@
 \documentclass[
-	handout,
+	% handout,
 	hyperref={unicode, colorlinks=true, linkcolor=.}
 ]{beamer}
-\usetheme{rochester}
+% \usetheme{rochester}
 
 \input{packages.tex}
 
@@ -38,22 +38,23 @@
 
 	\section{Motivation}
 
-	\input{frames/optimization_by_approximation.tex}
-	\input{frames/newton-raphson.tex}
-	\input{frames/gradeint_descent.tex}
-	\input{frames/determining_learning_rate.tex}
+	\input{frames/motivation/optimization_by_approximation.tex}
+	\input{frames/motivation/newton-raphson.tex}
+	\input{frames/motivation/gradeint_descent.tex}
+	\input{frames/motivation/determining_learning_rate.tex}
 
 	\section{Loss as a Random Field}
 
-	\input{frames/random_field_primer.tex}
-	\input{frames/loss_as_random_field.tex}
+	\input{frames/loss_as_random_field/random_field_primer.tex}
+	\input{frames/loss_as_random_field/random_field_derivative.tex}
+	\input{frames/loss_as_random_field/loss_as_random_field.tex}
 
 	\section{Covariance Models}
 
 
 	\appendix
 
-	\begin{frame}{Bibliography}
+	\begin{frame}[allowframebreaks]{Bibliography}
 		\printbibliography
 	\end{frame}
 \end{document}
