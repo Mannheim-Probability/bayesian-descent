@@ -1,0 +1,24 @@
+\begin{frame}{Gradient Descent}
+	Assuming \(\hessian\Loss \preceq \ubound\identity\) implies
+	\only<1-2>{
+		\begin{align*}
+			|\Loss(\param+\step) - T^1_\param \Loss(\param+\step)|
+			&= \left| \frac 12 \int_0^1 \step^T \grad^2\Loss(\param + \lambda \step)\step d\lambda\right|\\
+			&\le \tfrac{\ubound}2 \|\step\|^2.
+		\end{align*}
+	}
+	\only<2>{Therefore we have}
+	\only<2->{
+		\begin{equation*}
+			\Loss(\param + \step) \le \hat{\Loss}_G(\param+\step)
+			:= T^1_\param \Loss(\param+\step) + \tfrac{\ubound}2\|\step\|^2.
+		\end{equation*}
+	}
+	\only<3>{
+		This results in \textbf{gradient descent}
+		\begin{equation*}
+			\step^*_{G} := - \frac1\ubound \grad\Loss(\param)
+			= \argmin_\step \hat{\Loss}_{G}(\param + \step).
+		\end{equation*}
+	}
+\end{frame}

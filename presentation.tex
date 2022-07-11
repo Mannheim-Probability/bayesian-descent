@@ -1,0 +1,75 @@
+\documentclass[
+	handout,
+	hyperref={unicode, colorlinks=true, linkcolor=.}
+]{beamer}
+% \usetheme{rochester}
+
+\input{packages.tex}
+
+%%% EDITING (Annotations, TODO, etc.) 
+\usepackage[draft]{fixme} %final removes annotations %draft includes annotations
+\fxsetup{theme=color}
+%%\fxnote{some note} ,\fxwarning{}, \fxerror{}, \fxfatal{} <- does not allow [final] to compile
+
+%%% BIBLIOGRAPHY
+\usepackage[style=alphabetic, backend=biber, seconds=true, date=iso, urldate=iso, maxcitenames=2]{biblatex}
+\addbibresource{references.bib}
+
+\input{macros.tex}
+
+
+\title{Using Statistics to Determine the Learning Rate for Gradient Descent}
+\author{Felix Benning}
+\institute{University of Mannheim}
+
+\begin{document}
+	\frame{\titlepage}
+
+	\begin{frame}{Outline}
+		\tableofcontents
+	\end{frame}
+
+	\AtBeginSection[]
+	{
+	\begin{frame}{Outline}
+		\tableofcontents[currentsection]
+	\end{frame}
+	}
+
+	\section{Motivation}
+
+		\input{frames/motivation/optimization_by_approximation.tex}
+		\input{frames/motivation/newton-raphson.tex}
+		\input{frames/motivation/gradeint_descent.tex}
+		\input{frames/motivation/determining_learning_rate.tex}
+
+	\section{Preliminaries}
+
+		\subsection{Random Fields}
+		\input{frames/random_fields/definitions.tex}
+		\input{frames/random_fields/derivative.tex}
+
+		\subsection{BLUE}
+		\input{frames/blue.tex}
+
+	\section{Main Results}
+
+		\input{frames/main_results/blue_of_loss_stationary.tex}
+		\input{frames/main_results/blue_of_loss_intrins_stat.tex}
+
+		\input{frames/main_results/bayesian_descent.tex}
+
+	\section{Covariance Models}
+		\input{frames/covariance_models/squared_exponential.tex}
+		\input{frames/covariance_models/matern_model_intro.tex}
+		\input{frames/covariance_models/matern.tex}
+
+		\input{frames/covariance_models/schlather-moreva_intro.tex}
+		\input{frames/covariance_models/schlather-moreva.tex}
+
+	\appendix
+
+	\begin{frame}[allowframebreaks]{Bibliography}
+		\printbibliography
+	\end{frame}
+\end{document}

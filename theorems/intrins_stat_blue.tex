@@ -1,0 +1,17 @@
+
+\begin{lemma}\label{lem: blue centered, intrinsically stationary}
+	If \(\Loss\) is a \textbf{centered, intrinsically stationary, differentiable}
+	random field, with variogram \(\variogram\), then
+	\begin{align*}
+		\BLUE[\underbrace{\Loss(\param+\step) - \Loss(\param)}_{=:\Loss_\param(\step)}
+		\mid \grad\Loss(\param)]
+		&=  \grad\variogram(\step)^T[\grad^2\variogram(0)]^{-1}
+		\grad\Loss(\param)\\
+		\intertext{
+			if the variogram is \textbf{rotation invariant}, i.e.
+			\(\variogram(\step)=\phi(\|\step^2\|)\), this simplifies to
+		}
+		&= \frac{\phi'(\|\step\|^2)}{\phi'(0)}
+		\langle \step, \grad\Loss(\param)\rangle
+	\end{align*}
+\end{lemma}

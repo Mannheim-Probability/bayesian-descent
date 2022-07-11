@@ -1,0 +1,33 @@
+
+\begin{theorem}[Bayesian Descent]\label{thm: bayesian descent}
+	Gradient descent, i.e. 
+	\begin{equation*}
+		\step(\lr) = - \tilde{\lr} \grad\Loss(\param)
+		= - \frac{\lr}{\|\grad\Loss(\param)\|} \grad\Loss(\param)
+	\end{equation*}
+	minimizes the 1-step 0-order \(\BLUE\) of rotation invariant random fields
+	\(\Loss\) in the following sense
+	\begin{enumerate}
+		\item for a \textbf{centered, intrinsically stationary, differentiable}
+		random field \(\Loss\) with \textbf{rotation invariant} variogram
+		\(\variogram(\step) = \phi(\|\step\|^2)\), we have
+		\begin{align*}
+			\step(\hat{\lr})
+			&= \argmin_{d}
+			\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
+			\hat{\lr}
+			&= \argmax_{\lr} \lr\frac{\phi'(\lr^2)}{\phi'(0)}
+		\end{align*}
+
+		\item for a \textbf{centered, isotropic} random field \(\Loss\) with
+		\(\C(\step)=C(\|\step\|^2)\), we have
+		\begin{align*}
+			\step(\hat{\lr})
+			&= \argmin_{d}
+			\BLUE[\Loss(\param + \step)\mid \Loss(\param), \grad\Loss(\param)]\\
+			\hat{\lr}
+			&= \argmin_{\lr}\frac{\sqC(\lr^2)}{\sqC(0)} \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+			-  \lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
+		\end{align*}
+	\end{enumerate}
+\end{theorem}

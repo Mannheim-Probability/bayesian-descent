@@ -194,33 +194,8 @@ with
 	\end{equation*}
 \end{proof}
 
-\begin{theorem}
-	Assuming \(\Loss\) is a \textbf{centered} random field with
-	Matérn covariance \(\C_{p+\frac12}\) for \(p\in\nat\), we have for \(\Loss(\param)\le 0\)
-	\begin{equation*}
-		\step(\hat{\lr})
-		= \argmin_{d}
-		\BLUE[\Loss(\param + \step) \mid \Loss(\param), \grad\Loss(\param)]
-	\end{equation*}
-	with
-	\begin{itemize}
-		\item \(p=1\)
-		\begin{equation*}
-			\hat{\lr}
-			= \frac{s}{\sqrt{3}}\frac{1}{\left(
-				1- \frac{\sqrt{3}}{s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
-			\right)}
-		\end{equation*}
+\input{theorems/covariance_models/matern.tex}
 
-		\item \(p=2\)
-		\begin{equation*}
-			\hat{\lr}
-			= \frac{s}{2\sqrt5} \left(
-				1 + \sqrt{1+\frac4{1-\frac{\sqrt{5}}{3s}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}}}
-			\right)
-		\end{equation*}
-	\end{itemize}
-\end{theorem}
 \begin{proof}
 	By Theorem~\ref{thm: bayesian descent}	we have
 	\begin{equation*}

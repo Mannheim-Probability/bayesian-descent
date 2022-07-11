@@ -1,0 +1,20 @@
+
+\begin{theorem}
+	For a \textbf{centered} random field \(\Loss\) with \textbf{squared exponential}
+	covariance function
+	\[
+		\C(\step) = ce^{-a\|\step\|^2},
+	\] we have
+	\begin{equation*}
+		\step(\hat{\lr})
+		= \argmin_{\step} \BLUE[\Loss(\param + \step)\mid \Loss(\param),\grad\Loss(\param)]
+	\end{equation*}	
+	with
+	\begin{equation*}
+		\hat{\lr}
+		= \frac{\Loss(\param)}{2\|\grad\Loss(\param)\|}
+		+ \sqrt{
+			\left(\frac{\Loss(\param)}{2\|\grad\Loss(\param)\|}\right)^2 + \frac1{2a}
+		}.
+	\end{equation*}
+\end{theorem}

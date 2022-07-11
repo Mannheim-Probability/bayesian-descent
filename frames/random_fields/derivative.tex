@@ -1,0 +1,31 @@
+\begin{frame}{Random Field Derivative}
+	\begin{definition}
+		If there exists a (square integrable) random field \(Z'\), such that for
+		all \(x\) we have
+		\[
+			\E\left[\bigg(\frac{Z(x+h)-Z(x)}{h}-Z'(x)\bigg)^2\right] \to 0 \quad (h\to 0),
+		\]	
+		then \(Z'\) is the derivative of the (square integrable) random field
+		\(Z\).
+	\end{definition}
+
+\only<2->{
+	\begin{theorem}[{\cite[Section 5.3.2]{scheurerComparisonModelsMethods2009}}]
+		\begin{center}
+		\(Z\) is differentiable \(\iff\) \(\partial_x\partial_y\C(x,y)\) exists	
+		\end{center}
+		We have
+		\begin{align*}
+			\Cov(Z'(x), Z'(y)) &= \partial_x\partial_y \C(x,y)
+\only<3->{
+			&&= -\C''(x-y)
+}			\\
+			\Cov(Z'(x), Z(y)) &= \partial_x\C(x,y)
+\only<3->{
+			&&= \C'(x-y)
+}
+		\end{align*}
+	\end{theorem}
+}
+	 
+\end{frame}

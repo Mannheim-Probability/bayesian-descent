@@ -1,0 +1,39 @@
+\begin{frame}{Determining the Learning Rate}
+	\setbeamersize{description width=0.57cm}
+
+	\begin{enumerate}
+		\item<1-> Estimation
+		\begin{description}
+	\only<1-6>{
+			\item<1->[Q:] For how long can we trust \(\grad\Loss(\param)\),
+			i.e. the first taylor approximation?
+			\item<2->[A:] Depends on how fast the gradient changes
+			\item<3->[Q:] How fast does the gradient change?
+			\item<4->[A:]
+				\(\hessian\Loss \preceq \ubound\identity\) represents a trust bound because
+				\[
+					\grad\Loss(\param+\step) - \grad\Loss(\param)
+					= \int_0^1 \hessian\Loss(\param + \lambda \step)\step d\lambda
+				\]
+			\item<5->[Q:] Can we just use \(\hessian\Loss(\param)\) to estimate that integral?
+	}
+			\item<6->[A:] Recursion
+		\end{description}
+	\only<7-|handout:0>{
+		\item<7-|handout:0> Religious Belief:
+
+		``I believe that \(\hessian\Loss(\param)\preceq
+		\ubound\identity\)'' therefore I set the learning rate
+		\[
+			\lr=\tfrac1\ubound
+		\]
+	}
+
+		\item<8-> Trial \& Error
+		\begin{description}
+			\item[fast:] Backtracking \parencite{truongBacktrackingGradientDescent2019}
+			\item<9->[slow:] ``Hyperparemeter Tuning'' (\(\rightarrow\) Bayesian
+			Optimization \parencite{frazierBayesianOptimization2018})
+		\end{description}
+	\end{enumerate}
+\end{frame}

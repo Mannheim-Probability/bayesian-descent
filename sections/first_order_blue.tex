@@ -2,22 +2,7 @@
 
 \subsection{Intrinsic Stationarity}
 
-\begin{lemma}\label{lem: blue centered, intrinsically stationary}
-	If \(\Loss\) is a \textbf{centered, intrinsically stationary, differentiable}
-	random field, with variogram \(\variogram\), then
-	\begin{align*}
-		\BLUE[\underbrace{\Loss(\param+\step) - \Loss(\param)}_{=:\Loss_\param(\step)}
-		\mid \grad\Loss(\param)]
-		&=  \grad\variogram(\step)^T[\grad^2\variogram(0)]^{-1}
-		\grad\Loss(\param)\\
-		\intertext{
-			if the variogram is \textbf{rotation invariant}, i.e.
-			\(\variogram(\step)=\phi(\|\step^2\|)\), this simplifies to
-		}
-		&= \frac{\phi'(\|\step\|^2)}{\phi'(0)}
-		\langle \step, \grad\Loss(\param)\rangle
-	\end{align*}
-\end{lemma}
+\input{theorems/intrins_stat_blue.tex}
 \begin{remark}\label{rem: replace variogram with covariance}
 	If \(\Loss\) is stationary we have \(\gamma(\step) = \C(0) - \C(\step)\)
 	Therefore \(\grad\gamma = - \grad\C\) and \(\grad^2\gamma = -\grad^2\C\)
@@ -68,22 +53,7 @@ A particularly charming thing about stationarity is, that
 (cf. Remark~\ref{rem: covariance uncorrelated}). So we can easily ``condition''
 on both \(\Loss(\param)\) and \(\grad\Loss(\param)\).
 
-\begin{lemma}\label{lem: blue centered, stationary}
-	If \(\Loss\) is a \textbf{stationary, centered, differentiable} random field
-	with covariance function \(\C\), then
-	\begin{align*}
-		\BLUE[\Loss(\param + \step)\mid \Loss(\param), \grad\Loss(\param)]
-		&= \frac{\C(\step)}{\C(0)} \Loss(\param)
-		+ \grad\C(\step)^T [\grad^2\C(0)]^{-1} \grad\Loss(\param)
-	\\
-	\intertext{
-		if additionally \(\Loss\) is \textbf{isotropic}, i.e.
-		\(\C(\step)=\sqC(\|\step\|^2)\), this reduces to
-	}
-		&= \frac{\sqC(\|\step\|^2)}{\sqC(0)} \Loss(\param)
-		+ \frac{\sqC'(\|\step\|^2)}{\sqC'(0)} \langle \step, \grad\Loss(\param)\rangle.
-	\end{align*}
-\end{lemma}
+\input{theorems/stationary_blue.tex}
 \begin{remark}
 	One could also use the gradient of the loss exclusively
 	\begin{align*}
@@ -190,39 +160,7 @@ on both \(\Loss(\param)\) and \(\grad\Loss(\param)\).
 	\end{align*}
 \end{proof}
 
-\begin{theorem}[Bayesian Descent]\label{thm: bayesian descent}
-	Gradient descent, i.e. 
-	\begin{equation*}
-		\step(\lr) = - \tilde{\lr} \grad\Loss(\param)
-		= - \frac{\lr}{\|\grad\Loss(\param)\|} \grad\Loss(\param)
-	\end{equation*}
-	minimizes the 1-step 0-order \(\BLUE\) of rotation invariant random fields
-	\(\Loss\) in the following sense
-	\begin{enumerate}
-		\item for a \textbf{centered, intrinsically stationary, differentiable}
-		random field \(\Loss\) with \textbf{rotation invariant} variogram
-		\(\variogram(\step) = \phi(\|\step\|^2)\), we have
-		\begin{align*}
-			\step(\hat{\lr})
-			&= \argmin_{d}
-			\BLUE[\Loss(\param + \step) - \Loss(\param)\mid \grad\Loss(\param)]\\
-			\hat{\lr}
-			&= \argmax_{\lr} \lr\frac{\phi'(\lr^2)}{\phi'(0)}
-		\end{align*}
-
-
-		\item for a \textbf{centered, isotropic} random field \(\Loss\) with
-		\(\C(\step)=C(\|\step\|^2)\), we have
-		\begin{align*}
-			\step(\hat{\lr})
-			&= \argmin_{d}
-			\BLUE[\Loss(\param + \step)\mid \Loss(\param), \grad\Loss(\param)]\\
-			\hat{\lr}
-			&= \argmin_{\lr}\frac{\sqC(\lr^2)}{\sqC(0)} \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
-			-  \lr\frac{\sqC'(\lr^2)}{\sqC'(0)}
-		\end{align*}
-	\end{enumerate}
-\end{theorem}
+\input{theorems/bayesian_descent.tex}
 
 \begin{proof}
 	We simply apply Lemma~\ref{lem: rotation invariant implies GD}	to the results
