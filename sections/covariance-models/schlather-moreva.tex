@@ -10,8 +10,8 @@ unbounded variograms (intrinsically stationary but not stationary random fields)
 	\quad \alpha\in (0,2],\ \beta\in(-\infty, 2].
 \end{equation*}
 Since the model only results in a differentiable random field for \(\alpha=2\),
-we will only consider \(\variogram_\beta(\step) := \variogram_{2,\beta}(\step) = \phi(\|\step\|^2)\),
-with
+we will only consider \(\variogram_\beta(\step) := \variogram_{2,\beta}(\step) =
+\phi(\|\step\|^2)\), with
 \begin{equation*}
 	\phi(x) = \frac{(1+x)^{\beta/2} -1}{2^{\beta/2}-1}.
 \end{equation*}
@@ -40,10 +40,10 @@ So we get
 
 For \(\beta<0\) the variogram is bounded. So we can define
 \[
-	\C_\beta(\lr) := c_\beta - \variogram_\beta(\lr)
+	\C_\beta(\step) := c_\beta - \variogram_\beta(\step)
 \]
 with \(c_\beta := (1-2^{\beta/2})^{-1} =
-\lim_{\lr\to\infty}\variogram_\beta(\variogram)\), and a (stationary) random
+\lim_{\|\step\|\to\infty}\variogram_\beta(\step)\). A (stationary) random
 field with this covariance function will have variogram \(\variogram_\beta\).
 
 \input{theorems/covariance_models/schlather-moreva_stationary.tex}

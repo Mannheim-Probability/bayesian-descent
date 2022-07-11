@@ -1,0 +1,20 @@
+\begin{frame}{The Schlather-Moreva Model}
+	\begin{equation*}
+		\variogram_{\alpha,\beta}(\step)
+		= \frac{(1+\|\step\|^\alpha)^{\beta/\alpha}-1}{2^{\beta/\alpha}-1}
+		\quad \alpha\in (0,2],\ \beta\in(-\infty, 2].
+	\end{equation*}
+	\begin{itemize}
+		\item Fractional Brownian Motion \(\variogram_{\alpha,\alpha}(\step)=\|\step\|^\alpha\) for \(\alpha=\beta\).
+		\item Differentiable for \(\alpha=2\).
+		\item Can be stationary for \(\beta<0\). 
+
+		I.e. we can define
+		\[
+			\C_\beta(\step) := c_\beta - \variogram_{2,\beta}(\step)
+		\]
+		with \(c_\beta := \lim_{\|\step\|\to\infty}\variogram_{2,\beta}(\step)\).
+		A random field with this covariance function will have variogram
+		\(\variogram_{2,\beta}\).
+	\end{itemize}
+\end{frame}
