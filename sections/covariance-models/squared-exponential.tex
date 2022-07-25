@@ -3,36 +3,26 @@
 
 In this section we are going to assume \(\C(\step)=\sqC(\|\step\|^2)\) with
 \begin{align*}
-	\sqC(x) = c e^{-ax}.
+	\sqC(\|\step\|^2) = \sigma^2 e^{-\frac{\|\step\|^2}{2\scale^2}}.
 \end{align*}
-Then the \(\BLUE\) simplifies further
+From Theorem~\ref{thm: bayesian descent} we know we just have to minimize
 \begin{align*}
-	\BLUE[\Loss(\param + \step)\mid \Loss(\param),\grad\Loss(\param)]
-	&= e^{-a\|\step\|^2}\Loss(\param)
-	+ e^{-a\|\step\|^2}\langle \step, \grad\Loss(\param)\rangle.
-\end{align*}
-Recall that the resulting optimization problem was
-\begin{align*}
-	\min_{\lr} \frac{\sqC(\lr^2)}{\sqC(0)}\Loss(\param)
-	- \frac{\sqC'(\lr^2)}{\sqC'(0)}\lr \|\grad\Loss(\param)\|
-	=\min_{\lr} e^{-a\lr^2}
-	\left[\Loss(\param) - \lr \|\grad\Loss(\param)\|\right]
+	\min_{\lr} \frac{\sqC(\lr^2)}{\sqC(0)}\frac{\Loss(\param)}{\|\grad\Loss(\param)\|}
+	- \frac{\sqC'(\lr^2)}{\sqC'(0)}\lr 
+	=\min_{\lr} e^{-\frac{\lr^2}{2\scale^2}}
+	\left[\frac{\Loss(\param)}{\|\grad\Loss(\param)\|} - \lr\right]
 \end{align*}
 This results in the first order condition
 \begin{align*}
-	0 \overset{!}&{=} -2a\lr e^{-a\lr^2}
-	\left[\Loss(\param) - \lr \|\grad\Loss(\param)\|\right]
-	- e^{-a\lr^2}\|\grad\Loss(\param)\|\\
-	&= e^{-a\lr^2}\left[
-		2a\|\grad\Loss(\param)\|\lr^2 - 2a\Loss(\param)\lr - \|\grad\Loss(\param)\|
+	0 \overset{!}&{=} -\frac{\lr}{\scale^2} e^{-\frac{\lr^2}{2\scale^2}}
+	\left[\frac{\Loss(\param)}{\|\grad\Loss(\param)\|} - \lr \right]
+	- e^{-\frac{\lr^2}{2\scale^2}}\\
+	&= \frac{e^{-\frac{\lr^2}{2\scale^2}}}{\scale^2}\left[
+		\lr^2 - \lr\frac{\Loss(\param)}{\|\grad\Loss(\param)\|} - \scale^2 
 	\right].
 \end{align*}
-Since the exponential can never be zero, we need the bracket to be zero. This
-results in the quadratic equation
-\begin{align*}
-	0 = \lr^2 - \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}\lr - \frac{1}{2a},
-\end{align*}
-and therefore
+Since the exponential can never be zero. But that is simply a quadratic equation.
+Therefore we obtain the following theorem:
 
 \input{theorems/covariance_models/squared_exponential.tex}
 
@@ -42,23 +32,24 @@ and therefore
 	\begin{align*}
 		\hat{\lr} =
 		\Big| \left\|\begin{pmatrix}
-			Q/2\\ 1/\sqrt{2a}	
+			Q/2\\ \scale
 		\end{pmatrix}\right\|
 		- \left\|\begin{pmatrix}
 			Q/2 \\ 0
 		\end{pmatrix}\right\|
 		\Big|	
 		\le \left\|\begin{pmatrix}
-			Q/2\\ 1/\sqrt{2a}
+			Q/2\\ \scale
 		\end{pmatrix} - \begin{pmatrix}
 			Q/2 \\ 0
 		\end{pmatrix}
-		\right\| = \frac1{\sqrt{2a}}
+		\right\| = \scale
 	\end{align*}
 	with
 	\begin{align*}
 		Q = \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}.
 	\end{align*}
+	For \(\Loss(\param) = \E[\Loss(\param)] = 0\) we have \(\hat{\lr}=\scale\).
 	And for \(Q\to -\infty\) we have \(\hat{\lr}\to 0\).
 \end{remark}
 
@@ -67,7 +58,7 @@ and therefore
 	\begin{align*}
 		\BLUE[\Loss(\param + \hat{\step})\mid \Loss(\param), \grad\Loss(\param)]
 		\le \Loss(\param)\underbrace{\frac14\left[
-			3 + \sqrt{1+\frac{2\|\grad\Loss(\param)\|^2}{a\Loss(\param)^2}}
+			3 + \sqrt{1+4\scale^2\frac{\|\grad\Loss(\param)\|^2}{\Loss(\param)^2}}
 		\right]}_{> 1}
 		< \Loss(\param).
 	\end{align*}
@@ -79,47 +70,47 @@ and therefore
 	We have
 	\begin{align*}
 		&\BLUE[\Loss(\param + \hat{\step})\mid \Loss(\param), \grad\Loss(\param)]\\
-		&= e^{-a\hat{\lr}^2}[\Loss(\param) - \hat{\lr}\|\grad\Loss(\param)\|]\\
-		&=e^{-a\hat{\lr}^2}\left[
+		&= e^{-\frac{\hat{\lr}^2}{2\scale^2}}[\Loss(\param) - \hat{\lr}\|\grad\Loss(\param)\|]\\
+		&=e^{-\frac{\hat{\lr}^2}{2\scale^2}}\left[
 			\Loss(\param)
 			- \frac{\Loss(\param)}2
 			- |\Loss(\param)|\sqrt{
 				\frac{1}{2^2}
-				+ \frac{\|\grad\Loss(\param)\|^2}{2a\Loss(\param)^2}
+				+ \scale^2\frac{\|\grad\Loss(\param)\|^2}{\Loss(\param)^2}
 			}
 		\right]\\
 		\overset{\Loss(\param)<0}&{=}
 		\underbrace{\Loss(\param)}_{<0}
-		\underbrace{e^{-a\hat{\lr}^2}}_{\ge 1- a\hat{\lr}^2}
+		\underbrace{e^{-\frac{\hat{\lr}^2}{2\scale^2}}}_{\ge 1- \frac{\hat{\lr}^2}{2\scale}}
 		\underbrace{\left[
 			\frac12 + \sqrt{\frac14
-			+ \frac{\|\grad\Loss(\param)\|^2}{2a\Loss(\param)^2}}
+			+ \scale^2\frac{\|\grad\Loss(\param)\|^2}{\Loss(\param)^2}}
 		\right]}_{>0}\\
-		&\le \Loss(\param)(1-a\hat{\lr}^2)
-		\frac12\left[1 + \sqrt{1 + \frac{2}{aQ^2}}\right],
+		&\le \Loss(\param)(1-\frac{\hat{\lr}^2}{2\scale^2})
+		\frac12\left[1 + \sqrt{1 + \frac{4\scale^2}{Q^2}}\right],
 	\end{align*}
 	where we use \(Q:= \frac{\Loss(\param)}{\|\grad\Loss(\param)\|}<0\) again.
 	Notice that
 	\begin{align*}
 		\hat{\lr}
-		= |Q|\left(-\frac12 + \sqrt{\frac14 + \frac{1}{2aQ^2}}\right)
-		= \frac{|Q|}2\left(-1 + \sqrt{1 + \frac{2}{aQ^2}}\right).
+		= |Q|\left(-\frac12 + \sqrt{\frac14 + \frac{\scale^2}{Q^2}}\right)
+		= \frac{|Q|}2\left(-1 + \sqrt{1 + \frac{4\scale^2}{Q^2}}\right).
 	\end{align*}
 	We therefore want to use the third binomial formula by splitting \(\hat{\lr}^2\)
 	\begin{align*}
 		&\BLUE[\Loss(\param + \hat{\step})\mid \Loss(\param), \grad\Loss(\param)]\\
 		&\le \frac{\Loss(\param)}2\left(
-			\left[1 + \sqrt{1+ \frac{2}{aq^2}}\right]
-			- \frac{aQ^2}4\left(-1 + \sqrt{1 + \frac{2}{aQ^2}}\right)^2
-			\left[1 + \sqrt{1 + \frac{2}{aQ^2}}\right]
+			\left[1 + \sqrt{1+ \frac{4\scale^2}{Q^2}}\right]
+			- \frac{Q^2}{2\scale^2}\left(-1 + \sqrt{1 + \frac{4\scale^2}{Q^2}}\right)^2
+			\left[1 + \sqrt{1 + \frac{4\scale^2}{Q^2}}\right]
 		\right)\\
 		&\le \frac{\Loss(\param)}2\left(
-			\left[1 + \sqrt{1 + \frac{2}{aQ^2}}\right]
-			- \frac{\bcancel{aQ^2}}4\left(-1 + \sqrt{1 + \frac{2}{aQ^2}}\right)
-			\left[\left|\cancel{1}+ \frac{2}{\bcancel{aQ^2}}\right| - \cancel{1^2}\right]
+			\left[1 + \sqrt{1 + \frac{4\scale^2}{Q^2}}\right]
+			- \frac{\bcancel{Q^2}}{2\bcancel{\scale^2}}\left(-1 + \sqrt{1 + \frac{4\scale^2}{Q^2}}\right)
+			\left[\left|\cancel{1}+ \frac{2\bcancel{\scale^2}}{\bcancel{Q^2}}\right| - \cancel{1^2}\right]
 		\right)\\
 		&\le \frac{\Loss(\param)}2\left[
-			\frac{3}2 + \frac12\sqrt{1+\frac2{aQ^2}}
+			\frac{3}2 + \frac12\sqrt{1+\frac{4\scale^2}{Q^2}}
 		\right].
 	\end{align*}
 	Substituting \(Q\) with its definition and moving \(\frac12\) out of the

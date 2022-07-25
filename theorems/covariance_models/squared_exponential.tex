@@ -3,8 +3,9 @@
 	For a \textbf{centered} random field \(\Loss\) with \textbf{squared exponential}
 	covariance function
 	\[
-		\C(\step) = ce^{-a\|\step\|^2},
-	\] we have
+		\C(\step) = \sigma^2 e^{-\frac{\|\step\|^2}{2\scale^2}},
+	\]
+	we have
 	\begin{equation*}
 		\step(\hat{\lr})
 		= \argmin_{\step} \BLUE[\Loss(\param + \step)\mid \Loss(\param),\grad\Loss(\param)]
@@ -14,7 +15,7 @@
 		\hat{\lr}
 		= \frac{\Loss(\param)}{2\|\grad\Loss(\param)\|}
 		+ \sqrt{
-			\left(\frac{\Loss(\param)}{2\|\grad\Loss(\param)\|}\right)^2 + \frac1{2a}
+			\left(\frac{\Loss(\param)}{2\|\grad\Loss(\param)\|}\right)^2 + \scale^2 
 		}.
 	\end{equation*}
 \end{theorem}
