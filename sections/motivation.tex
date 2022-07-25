@@ -5,6 +5,16 @@ Most optimization schemes can be explained by choosing an approximation
 approximation \(\hat{\Loss}\) instead and use the minimum as our next guess.
 The approximations are typically simple, easy to minimize functions.
 
+\begin{figure}
+	\includegraphics[scale=0.7]{graphics/BLUEvsTaylor3.png}
+	\caption{
+		A centered Gaussian Random Field with squared exponential covariance
+		function is approximated by \(\param \mapsto \BLUE[\Loss(\param)\mid
+		\Loss(0),\grad\Loss(0)]\). For comparison the first Taylor
+		approximation in zero is also plotted. 
+	}
+\end{figure}
+
 \begin{itemize}
 	\item 
 	The Newton-Raphson method is an immediate result of the second taylor approximation
