@@ -1,6 +1,23 @@
 \section{Removing the `Centered' Assumption}
 
-Another way to motivate \(\Loss\) being a random field is: Assume we have some
+\subsection{Constant Mean}\label{subsec: constant mean}\fxnote{Should this be explained earlier?}
+
+A cheap generalization is \(\E[\Loss(\param)]=\mu\) for a constant \(\mu\).
+If we consider \(\bar{\Loss}(\param):=\Loss(\param) - \mu\) all the results
+hold for \(\bar{\Loss}\) so
+\begin{equation*}
+	\BLUE[\Loss(\param+\step) \mid \Loss(\param), \grad\Loss(\param)]
+	= \mu + \BLUE[\bar{\Loss}(\param+\step) \mid \bar{\Loss}(\param), \grad\Loss(\param)].
+\end{equation*}
+Minimization of the sum implies minimization of the second term, so we can recycle all results
+but replace \(\bar{\Loss}\) with \(\Loss - \mu\) at the end. I.e. instead of 
+\(\frac{\bar{\Loss}(\param)}{\|\nabla\Loss(\param)\|}\) we want to use
+\(\frac{\Loss(\param) -\mu}{\|\nabla\Loss(\param)\|}\) in the learning rate
+of Theorem~\ref{thm: bayesian descent}.
+
+\subsection{Non-constant Mean}
+
+A way to motivate \(\Loss\) being a random field is: Assume we have some
 random field \(Z\), and randomly pick examples
 \((X,Y) := (X,Z(X))\) from it. The real loss is the conditional expectation on
 \(Z\)
@@ -23,21 +40,65 @@ To actually work with this model, we need to make some assumptions.
 
 If we define
 \begin{equation*}
-	\mu(\param, X):= \E[\loss(\param, X,Y)\mid X],
+	m_\Loss(\param, X):= \E[\loss(\param, X,Y)\mid X],
 \end{equation*}
 e.g. for the mean squared case
 \begin{align*}
-	\mu(\param, X)&= \E[\|\model{X}-Z(X)\|^2 \mid X]\\
+	m_\Loss(\param, X)&= \E[\|\model{X}-Z(X)\|^2 \mid X]\\
 	&= \|\model{X}\|^2 - 2\langle \model{X}, \underbrace{\E[Z(X)\mid X]}_{=0}\rangle
-	+ \underbrace{\E[\|Z(X)\|^2\mid X]}_{=\sigma^2}\\
-	&= \|\model{X}\|^2 + \sigma^2,
+	+ \underbrace{\E[\|Z(X)\|^2\mid X]}_{=\sigma_Z^2}\\
+	&= \|\model{X}\|^2 + \sigma_Z^2.
 \end{align*}
-then we have by the tower property of conditional expectation
+Where we have used that \(\E[Z(x)]=0\) and the independence of \(Z\) and \(X\)
+for \(\E[Z(X)\mid X]=0\) and similar for the variance of \(Z\).
+
+By the tower property of conditional expectation
 \begin{equation*}
-	\E[\Loss(\param)]
+	m_\Loss(\param) := \E[\Loss(\param)]
 	= \E[\loss(\param, X,Y)]
-	= \E[\mu(\param, X)].
+	= \E[m_\Loss(\param, X)]
+	= \E\|\model{X}\|^2 + \sigma_Z^2.
 \end{equation*}
-This allows us to center the loss. Or in the mean squared case: if we use no
-information about \(Z\), we can still make sure that \(\Loss\) has constant
-expectation \(\sigma^2\), by subtracting \(\model{X}^2\).
+While the constant \(\sigma_Z^2\) is no big deal and can be estimated from the
+data \(Y=Z(X)\), the term \(\E\|\model{X}\|^2\) is more complicated. We have
+\begin{equation*}
+	\BLUE[\Loss(\param+\step)\mid \Loss(\param),\grad\Loss(\param)]
+	= m_\Loss(\param+\step)
+	+ \BLUE[\bar{\Loss}(\param+\step)\mid \bar{\Loss}(\param), \grad\bar{\Loss}(\param)]
+\end{equation*}
+Now even if we could calculate \(m_\Loss(\param)\) easily, to get \(\bar{\Loss}\)
+and \(\grad\bar{\Loss}\), we then still have to minimize the sum. But the first
+part \(m_\Loss\) is a deterministic function. And we started out trying to minimize
+a deterministic function in our motivation and realized that we got nowhere. So
+we can not really hope that we will get any better results for a black-box here.
+
+\subsubsection{The Linear Model}
+
+Assume that our input vector \(X\) has centered iid entries \(X^{(1)},\dots,X^{(\dimension)}\)
+with variance \(\sigma_X^2\) and consider the linear model
+\begin{equation*}
+	\model[(\param, \param_0)]{X} = X\param + \tfrac{\sigma_X}{\sqrt{\dimension}}\param_0,
+\end{equation*}
+where we have split our usual parameters \(\param\) into coefficients \(\param\) and
+bias \(\param_0\). Do not worry about the factor in the bias for now. Then we have
+\begin{align*}
+	\E\|\model[(\param, \param_0)]{X}\|^2
+	&= \param^T \E[X^T X] \param
+	+ 2\param_0\tfrac{\sigma_X}{\sqrt{\dimension}} \langle 1, \underbrace{\E[X]}_{=0}\param\rangle
+	+ \param_0^2\underbrace{\tfrac{\sigma_X^2}{\dimension}\langle 1, 1\rangle }_{=\sigma_X^2}\\
+	&=\sigma_X^2 (\|\param\|^2 + \param_0^2)
+\end{align*}
+Joining \(\param\) and \(\param_0\) back together we have
+\[
+	m_\Loss(\param) = \sigma_X^2 \|\param\|^2 + \sigma_Z^2.
+\]
+Now you probably sopped wondering about the weird bias term.
+
+\subsubsection{\texorpdfstring{\(L_2\)}{L₂}-Regularization}
+
+Now that we motivated \(m_\Loss(\param) = \sigma_X^2\|\param\|^2 + \sigma_Z^2\), we
+will forget its origin and simply take it as a given. The result we will derive
+from this, will essentially be some form of \(L_2\)-regularization of our
+optimization problem.
+
+
