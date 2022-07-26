@@ -2,7 +2,7 @@
 
 \subsection{Intrinsic Stationarity}
 
-\input{theorems/intrins_stat_blue.tex}
+\input{snippets/intrins_stat_blue.tex}
 \begin{remark}\label{rem: replace variogram with covariance}
 	If \(\Loss\) is stationary we have \(\gamma(\step) = \C(0) - \C(\step)\)
 	Therefore \(\grad\gamma = - \grad\C\) and \(\grad^2\gamma = -\grad^2\C\)
@@ -53,7 +53,7 @@ A particularly charming thing about stationarity is, that
 (cf. Remark~\ref{rem: covariance uncorrelated}). So we can easily ``condition''
 on both \(\Loss(\param)\) and \(\grad\Loss(\param)\).
 
-\input{theorems/stationary_blue.tex}
+\input{snippets/stationary_blue.tex}
 \begin{remark}
 	One could also use the gradient of the loss exclusively
 	\begin{align*}
@@ -160,7 +160,7 @@ on both \(\Loss(\param)\) and \(\grad\Loss(\param)\).
 	\end{align*}
 \end{proof}
 
-\input{theorems/bayesian_descent.tex}
+\input{snippets/bayesian_descent.tex}
 
 \begin{proof}
 	We simply apply Lemma~\ref{lem: rotation invariant implies GD}	to the results

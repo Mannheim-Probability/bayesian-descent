@@ -1,0 +1,20 @@
+
+\begin{definition}
+	The Matérn model \(\C_\nu\) is given by
+	\[
+		\C_\nu(\|\step\|)
+		= \sigma^2 \frac{2^{1-\nu}}{\Gamma(\nu)}
+		\left(\frac{\sqrt{2\nu}\|\step\|}{\scale}\right)^\nu
+		\modifiedBessel\left(\frac{\sqrt{2\nu}\|\step\|}{\scale}\right)
+		\quad \scale >0, \nu \ge 0
+	\]
+	where \(\modifiedBessel\) is the modified Bessel function. For \(\nu=p+\frac12\)
+	with \(p\in\nat_0\) it can be simplified \parencite[cf.][sec.
+	4.2.1]{williamsGaussianProcessesMachine2006} to
+	\[
+		\C_{\nu=p+\tfrac12}(\|\step\|)
+		= \sigma^2 \exp\left(- \tfrac{\sqrt{2\nu} \|\step\|}{s}\right)\tfrac{p!}{(2p)!}
+		\sum_{k=0}^p \tfrac{(2p-k)!}{(p-k)!k!}\left(\tfrac{2\sqrt{2\nu}}{s}\|\step\|\right)^k
+		\nonumber
+	\]
+\end{definition}
