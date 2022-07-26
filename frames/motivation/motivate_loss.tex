@@ -1,0 +1,14 @@
+\begin{frame}{Loss Function in Machine Learning}
+	\begin{itemize}
+		\item 
+		Consider data \(X,Y\) and a parametric model \(\model{X}\) predicting
+		\(Y\). Then the mean squared ``loss'' is
+		\[
+			\Loss(\param) = \E\|\model{X}- Y\|^2.
+		\]
+		\item<2->
+		Now forget the model and assume an arbitrary loss function \(\Loss\) with
+		\textbf{high dimensional} (\(\sim 1\) million) parameters \(\param\).
+		\item<3-> Black-box optimization?
+	\end{itemize}
+\end{frame}
