@@ -1,26 +1,60 @@
 \subsection{Matérn}
 
-The Matérn model \(\C_\nu\) encompasses the nugget effect for \(\nu=0\),
-the exponential model for \(\nu=\tfrac12\) and the squared exponential model
-for \(\nu=\infty\). The smoothness of the model increases with increasing
-\(\nu\). While the exponential covariance model results in a random field which
-is not yet differentiable, larger \(\nu\) result in increasing
-differentiability\fxnote{source}. For \(\nu = p+\tfrac12\) with \(p\in\nat_0\) there exists the
-simplified formula\fxnote{source}
-\begin{align}
-	\C_{p+\tfrac12}(\|\step\|)
-	&= \sigma^2 \exp\left(- \tfrac{\sqrt{2p+1} \|\step\|}{s}\right)\tfrac{p!}{(2p)!}
-	\sum_{k=0}^p \tfrac{(2p-k)!}{(p-k)!k!}\left(\tfrac{2\sqrt{2p+1}}{s}\|\step\|\right)^k
-	\nonumber
-	\\
-	\label{eq: matern abstractions}
-	&= \sigma^2 \exp\left(- \mf(\|\step\|)\right)
-	\sum_{k=0}^p \underbrace{\tfrac{p!}{(2p)!}\tfrac{(2p-k)!}{(p-k)!k!}2^k}_{=:\mcoeff(k)}
-	\mf(\|\step\|)^k
-\end{align}
+\begin{definition}
+	The Matérn model \(\C_\nu\) is given by
+	\[
+		\C_\nu(\|\step\|)
+		= \sigma^2 \frac{2^{1-\nu}}{\Gamma(\nu)}
+		\left(\frac{\sqrt{2\nu}\|\step\|}{\scale}\right)^\nu
+		\modifiedBessel\left(\frac{\sqrt{2\nu}\|\step\|}{\scale}\right)
+		\quad \scale >0, \nu \ge 0
+	\]
+	where \(\modifiedBessel\) is the modified Bessel function. For \(\nu=p+\frac12\)
+	with \(p\in\nat_0\) it can be simplified \parencite[cf.][sec.
+	4.2.1]{williamsGaussianProcessesMachine2006} to
+	\begin{align}
+		\C_{\nu=p+\tfrac12}(\|\step\|)
+		&= \sigma^2 \exp\left(- \tfrac{\sqrt{2\nu} \|\step\|}{s}\right)\tfrac{p!}{(2p)!}
+		\sum_{k=0}^p \tfrac{(2p-k)!}{(p-k)!k!}\left(\tfrac{2\sqrt{2\nu}}{s}\|\step\|\right)^k
+		\nonumber
+		\\
+		\label{eq: matern abstractions}
+		&= \sigma^2 \exp\left(- \mf(\|\step\|)\right)
+		\sum_{k=0}^p \underbrace{\tfrac{p!}{(2p)!}\tfrac{(2p-k)!}{(p-k)!k!}2^k}_{=:\mcoeff(k)}
+		\mf(\|\step\|)^k
+	\end{align}
+
+\end{definition}
+
+
+
+\begin{remark}[{\cite[based on][]{williamsGaussianProcessesMachine2006}}]
+	The Matérn model encompasses
+	\begin{enumerate}
+		\item the \textbf{nugget effect} for \(\nu=0\) (independent randomness)
+		\item the \textbf{exponential model} for \(\nu=\tfrac12\) (Ornstein-Uhlenbeck process)
+		\item the \textbf{squared exponential model} for \(\nu\to \infty\) with the same
+		scale \(\scale\) and variance \(\sigma^2\).
+	\end{enumerate}
+	I.e. the smoothness of the model increases with increasing \(\nu\).
+	While the exponential covariance model with \(\nu=\tfrac12\) results in a
+	random field which is not yet differentiable, larger \(\nu\) result in
+	increasing differentiability.
+\end{remark}
+
+Since differentiability starts with \(\nu=\frac32\) and we have a more explicit
+formula for \(\nu=p+\tfrac12\) the cases \(\nu=\frac32\) and \(\nu=\frac52\) are
+of particular interest.
+\begin{quote}
+	``[F]or \(\nu \ge 7/2\), in the absence of explicit prior knowledge about the existence
+	of higher order derivatives, it is probably very hard from finite noisy
+	training examples to distinguish between values of \(\nu \ge 7/2\) (or even to
+	distinguish between finite values of \(\nu\) and \(\nu \to\infty\), the smooth squared
+	exponential, in this case)'' \parencite[85]{williamsGaussianProcessesMachine2006}.
+\end{quote}
 With this we can take the derivative
 \begin{align*}
-	\C_{p+\frac12}'(\lr)
+	\C_{\nu=p+\frac12}'(\lr)
 	&= -\sigma^2\exp(-\mf(\lr))\mf'(\lr)\underbrace{\bigg[
 		\sum_{k=0}^p\mcoeff(k)\mf(\lr)^k
 		- \sum_{k=1}^p \mcoeff(k)k\mf(\lr)^{k-1}
