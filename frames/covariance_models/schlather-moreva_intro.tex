@@ -1,20 +1,22 @@
 \begin{frame}{The Schlather-Moreva Model}
 	\begin{equation*}
 		\variogram_{\alpha,\beta}(\step)
-		= \frac{(1+\|\step\|^\alpha)^{\beta/\alpha}-1}{2^{\beta/\alpha}-1}
-		\quad \alpha\in (0,2],\ \beta\in(-\infty, 2].
+		= \sigma^2|1- (1+\|\step\|^\alpha)^{-\beta/\alpha}|
+		\quad \alpha\in (0,2],\ \beta\in[-2,\infty).
 	\end{equation*}
 	\begin{itemize}
-		\item Fractional Brownian Motion \(\variogram_{\alpha,\alpha}(\step)=\|\step\|^\alpha\) for \(\alpha=\beta\).
+		\item Fractional Brownian Motion \(\variogram_{\alpha,-\alpha}(\step)=\|\step\|^\alpha\) for \(\alpha=-\beta\).
 		\item Differentiable for \(\alpha=2\).
-		\item Can be stationary for \(\beta<0\). 
-
-		I.e. we can define
+		\item Can be stationary for \(\beta>0\). In particular the
+		\textbf{Rational Quadratic} covariance function
 		\[
-			\C_\beta(\step) := c_\beta - \variogram_{2,\beta}(\step)
+			\C_\beta(\step)
+			= \sigma^2\left(1+	\frac{\|\step\|^2}{\beta\scale^2}\right)^{-\beta/2}
 		\]
-		with \(c_\beta := \lim_{\|\step\|\to\infty}\variogram_{2,\beta}(\step)\).
-		A random field with this covariance function will have variogram
-		\(\variogram_{2,\beta}\).
+		results in \(\variogram_{2,\beta}\) up to scaling of \(\step\) by
+		\(\sqrt{\beta}\scale\).
+
+		\item For \(\beta\to\infty\), \(\C_\beta\) converges to the \textbf{squared
+		exponential} again.
 	\end{itemize}
 \end{frame}

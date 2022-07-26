@@ -1,26 +1,34 @@
 \subsection{Matérn}
 
-The Matérn model \(\C_\nu\) encompasses the nugget effect for \(\nu=0\),
-the exponential model for \(\nu=\tfrac12\) and the squared exponential model
-for \(\nu=\infty\). The smoothness of the model increases with increasing
-\(\nu\). While the exponential covariance model results in a random field which
-is not yet differentiable, larger \(\nu\) result in increasing
-differentiability\fxnote{source}. For \(\nu = p+\tfrac12\) with \(p\in\nat_0\) there exists the
-simplified formula\fxnote{source}
-\begin{align}
-	\C_{p+\tfrac12}(\|\step\|)
-	&= \sigma^2 \exp\left(- \tfrac{\sqrt{2p+1} \|\step\|}{s}\right)\tfrac{p!}{(2p)!}
-	\sum_{k=0}^p \tfrac{(2p-k)!}{(p-k)!k!}\left(\tfrac{2\sqrt{2p+1}}{s}\|\step\|\right)^k
-	\nonumber
-	\\
-	\label{eq: matern abstractions}
-	&= \sigma^2 \exp\left(- \mf(\|\step\|)\right)
-	\sum_{k=0}^p \underbrace{\tfrac{p!}{(2p)!}\tfrac{(2p-k)!}{(p-k)!k!}2^k}_{=:\mcoeff(k)}
-	\mf(\|\step\|)^k
-\end{align}
-With this we can take the derivative
+\input{snippets/covariance_models/matern_definition.tex}
+
+\input{snippets/covariance_models/matern_remark.tex}
+
+I.e. the smoothness of the model increases with increasing \(\nu\).  While the
+exponential covariance model with \(\nu=\tfrac12\) results in a random field
+which is not yet differentiable, larger \(\nu\) result in increasing
+differentiability. As differentiability starts with \(\nu=\frac32\) and we have
+a more explicit formula for \(\nu=p+\tfrac12\) the cases \(\nu=\frac32\) and
+\(\nu=\frac52\) are
+of particular interest.
+\begin{quote}
+	``[F]or \(\nu \ge 7/2\), in the absence of explicit prior knowledge about the existence
+	of higher order derivatives, it is probably very hard from finite noisy
+	training examples to distinguish between values of \(\nu \ge 7/2\) (or even to
+	distinguish between finite values of \(\nu\) and \(\nu \to\infty\), the smooth squared
+	exponential, in this case)'' \parencite[85]{williamsGaussianProcessesMachine2006}.
+\end{quote}
+Recall we have for \(\nu=p+\frac12\)
+\begin{equation}
+		\label{eq: matern abstractions}
+		\C_{ \nu=p+\frac12 }(\lr)= \sigma^2 \exp\left(- \mf(\|\step\|)\right)
+		\sum_{k=0}^p \underbrace{\tfrac{p!}{(2p)!}\tfrac{(2p-k)!}{(p-k)!k!}2^k}_{=:\mcoeff(k)}
+		\mf(\|\step\|)^k
+\end{equation}
+with \(\mf(\lr) := \frac{\sqrt{2\nu}}{\scale}\lr\). Taking the
+derivative results in
 \begin{align*}
-	\C_{p+\frac12}'(\lr)
+	\C_{\nu=p+\frac12}'(\lr)
 	&= -\sigma^2\exp(-\mf(\lr))\mf'(\lr)\underbrace{\bigg[
 		\sum_{k=0}^p\mcoeff(k)\mf(\lr)^k
 		- \sum_{k=1}^p \mcoeff(k)k\mf(\lr)^{k-1}
@@ -134,8 +142,8 @@ with
 			\exp(-\mf(\lr))\sum_{k=0}^{p-1}\dcoeff(k)\mf(\lr)^k
 		}{\exp(0)\dcoeff(0)0^0}\\
 		\overset{\eqref{eq: mcoeff 0}}&=
-		\lr\exp\left(-\tfrac{\sqrt{2p+1}}{s}|\lr|\right)
-		\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}|\lr|\right)^k.
+		\lr\exp\left(-\tfrac{\sqrt{2\nu}}{s}|\lr|\right)
+		\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2\nu}}{s}|\lr|\right)^k.
 	\end{align*}
 	As the equation above is negative for \(\lr \le 0\) but positive for \(\lr \ge 0\)
 	as \(\dcoeff(k)\ge 0\), we can assume without loss of generality \(\lr\ge 0\)
@@ -145,17 +153,17 @@ with
 
 	Taking the derivative for \(\lr\ge 0\) results in
 	\begin{equation}\label{eq: derivative of matern grad cov}
-		\exp\left(-\tfrac{\sqrt{2p+1}}{s}\lr\right)\left[
-			-\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^{k+1}
-			+\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}(k+1)\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k 
+		\exp\left(-\tfrac{\sqrt{2\nu}}{s}\lr\right)\left[
+			-\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}\left(\tfrac{\sqrt{2\nu}}{s}\lr\right)^{k+1}
+			+\sum_{k=0}^{p-1}\tfrac{\dcoeff(k)}{\dcoeff(0)}(k+1)\left(\tfrac{\sqrt{2\nu}}{s}\lr\right)^k 
 		\right]
 	\end{equation}
 	So for the first order condition we require
 	\begin{align*}
 		0 &= 1 + \sum_{k=1}^{p-1}
 		\left[(k+1)\tfrac{\dcoeff(k)}{\dcoeff(0)} - \tfrac{\dcoeff(k-1)}{\dcoeff(0)}\right]
-		\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^k
-		- \tfrac{\dcoeff(p-1)}{\dcoeff(0)}\left(\tfrac{\sqrt{2p+1}}{s}\lr\right)^p.
+		\left(\tfrac{\sqrt{2\nu}}{s}\lr\right)^k
+		- \tfrac{\dcoeff(p-1)}{\dcoeff(0)}\left(\tfrac{\sqrt{2\nu}}{s}\lr\right)^p.
 	\end{align*}
 	Let us have a look at the coefficients 
 	\begin{align*}
@@ -194,7 +202,7 @@ with
 	\end{equation*}
 \end{proof}
 
-\input{theorems/covariance_models/matern.tex}
+\input{snippets/covariance_models/matern.tex}
 
 \begin{proof}
 	By Theorem~\ref{thm: bayesian descent}	we have
